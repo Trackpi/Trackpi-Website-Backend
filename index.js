@@ -1,10 +1,19 @@
 require("dotenv").config();
 const express = require("express")
+
 const connectDB = require("./config/connection");
 const cors = require('cors')
+require('./config/connection')
+adminRoute=require('./routes/adminRouter')
 const app =express()
+
 const fs = require("fs");
 const path = require("path");
+
+app.use(express.json())
+app.use(cors())
+app.use(adminRoute)
+
 
 
 const projectRouter = require("./routes/projectRouter");
