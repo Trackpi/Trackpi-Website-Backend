@@ -21,7 +21,7 @@ exports.deleteVideo = async (req, res) => {
     const { id } = req.params;
     if (id) {
       const delvideo = await video.findByIdAndDelete(id);
-      res.status(200).json("video deleted SuccessFully");
+      res.status(200).json("video deleted SuccessFully", delvideo);
     } else {
       res.status(500).json("Video not found!!");
     }
