@@ -1,9 +1,11 @@
 const express = require("express")
-const mongoose= require('mongoose')
 const cors = require('cors')
+require('./config/connection')
+adminRoute=require('./routes/adminRouter')
 const app =express()
 app.use(express.json())
 app.use(cors())
+app.use(adminRoute)
 
 
 

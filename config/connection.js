@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-const databaseUrl = process.env.URL;
+const databaseUrl = process.env.CONNECTION_STRING;
 console.log('MongoDB URI:', databaseUrl); // Check if URI is loaded correctly
 
  const connect=mongoose.connect(databaseUrl)
