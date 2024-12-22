@@ -1,18 +1,20 @@
-
+// config/connection.js
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-const databaseUrl = process.env.URL;
-console.log('MongoDB URI:', databaseUrl); // Check if URI is loaded correctly
+const connectDB = () => {
+  const databaseUrl = process.env.CONNECTION_STRING;
+  console.log('MongoDB URI:', databaseUrl); // Log the URI to ensure it's correct
 
- const connect=mongoose.connect(databaseUrl)
- connect.then(() => {
- console.log('MongoDB connected');
- })
-.catch(error => {
-  console.error('Error connecting to the database:', error);
- });
+  mongoose.connect(databaseUrl)  // No need for useNewUrlParser or useUnifiedTopology anymore
+    .then(() => {
+      console.log('MongoDB connected');
+    })
+    .catch(error => {
+      console.error('Error connecting to MongoDB:', error.message);
+      process.exit(1); // Exit process with failure
+    });
+};
 
+module.exports = connectDB;
 
- module.exports = connect;
- 
