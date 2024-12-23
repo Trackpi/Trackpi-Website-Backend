@@ -14,10 +14,9 @@ const verifyJwt=(req, res, next) =>{
 
   try {
     // Verify the token and decode it
-    const decodedToken = jwt.verify(token, secretKey);
-
+    const decodedToken = jwt.verify(token, process.env.JWT_KEY);
     // Extract the JWT ID (jti) from the decoded token
-    const jwtId = decodedToken.jti;
+    const jwtId = decodedToken._id;
 
     if (jwtId) {
       console.log(`JWT ID (jti): ${jwtId}`);

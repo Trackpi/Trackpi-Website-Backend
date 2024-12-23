@@ -1,40 +1,37 @@
 
 require("dotenv").config();
 const express = require("express")
-
 const connectDB = require("./config/connection");
 const cors = require('cors')
-require('./config/connection')
-adminRoute=require('./routes/adminRouter')
-const app =express()
-
 const fs = require("fs");
 const path = require("path");
+require('./config/connection')
+adminRoute=require('./routes/adminRouter')
+const projectRouter = require("./routes/projectRouter");
+const videoRouter = require("./routes/videoRouter");
 
-app.use(express.json())
+const app =express()
+app.use(express.json({ limit: "10mb" }))
+app.use(express.urlencoded({ limit: "10mb",extended: true }));
 app.use(cors())
 app.use(adminRoute)
 
+// Ensure folders exist
+const ensureFolderExists = (folderPath) => {
+  if (!fs.existsSync(folderPath)) {
+    fs.mkdirSync(folderPath, { recursive: true });
+    console.log(`Created folder: ${folderPath}`);
+  }
+};
 
-
-const projectRouter = require("./routes/projectRouter");
-
-// Ensure the uploads folder exists
-const uploadDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true }); // Creates 'uploads' folder if it doesn't exist
-}
-
-// Middleware
-app.use(express.json());
-app.use(cors());
+ensureFolderExists(path.join(__dirname, "uploads/projects"));
+ensureFolderExists(path.join(__dirname, "uploads/videos"));
 
 // Connect to database
 connectDB();
-console.log('MongoDB URI:', process.env.CONNECTION_STRING);
 
-// Routes
 app.use("/api/projects", projectRouter);
+app.use("/api/videos", videoRouter);
 
 app.listen(3001,()=>{
     console.log("server is running");
