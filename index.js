@@ -17,6 +17,7 @@ app.use(express.urlencoded({ limit: "10mb",extended: true }));
 app.use(cors())
 app.use(adminRoute)
 
+
 // Ensure folders exist
 const ensureFolderExists = (folderPath) => {
   if (!fs.existsSync(folderPath)) {
@@ -27,7 +28,10 @@ const ensureFolderExists = (folderPath) => {
 
 ensureFolderExists(path.join(__dirname, "uploads/projects"));
 ensureFolderExists(path.join(__dirname, "uploads/videos"));
-ensureFolderExists(path.join(__dirname, "uploads/interns"));
+
+ensureFolderExists(path.join(__dirname, "uploads/interns"))
+ensureFolderExists(path.join(__dirname, "uploads/posters"));
+
 
 // Connect to database
 connectDB();
