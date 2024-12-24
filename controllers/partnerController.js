@@ -1,4 +1,4 @@
-const Partners = require('../models/partnerSchema'); 
+const Partners = require('../models/partnershipSchema'); 
 
 // Create a new partner
 exports.createPartner = async (req, res) => {
