@@ -9,6 +9,7 @@ require('./config/connection')
 adminRoute=require('./routes/adminRouter')
 const projectRouter = require("./routes/projectRouter");
 const videoRouter = require("./routes/videoRouter");
+const interRouter = require('./routes/interRouter')
 
 const app =express()
 app.use(express.json({ limit: "10mb" }))
@@ -27,13 +28,17 @@ const ensureFolderExists = (folderPath) => {
 
 ensureFolderExists(path.join(__dirname, "uploads/projects"));
 ensureFolderExists(path.join(__dirname, "uploads/videos"));
+
+ensureFolderExists(path.join(__dirname, "uploads/interns"))
 ensureFolderExists(path.join(__dirname, "uploads/posters"));
+
 
 // Connect to database
 connectDB();
 
 app.use("/api/projects", projectRouter);
 app.use("/api/videos", videoRouter);
+app.use("/api/interns", interRouter);
 
 app.listen(3001,()=>{
     console.log("server is running");

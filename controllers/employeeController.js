@@ -9,10 +9,9 @@ exports.addEmployee = async (req, res) => {
       designation,
       description,
       socialMediaLinks,
-      emptype,
     } = req.body;
 
-    const photo = req.file ? `/uploads/${req.file.filename}` : null;
+    const photo = req.file ? `/uploads/employees/${req.file.filename}` : null;
 
     const employee = new Employee({
       empID,
@@ -20,26 +19,28 @@ exports.addEmployee = async (req, res) => {
       designation,
       photo,
       description,
-      socialMediaLinks,
-      emptype,
+      socialMediaLinks: JSON.parse(socialMediaLinks || '{}'),
     });
-    await employee.save();
 
+    await employee.save();
     res.status(201).json({ message: "Employee added successfully", employee });
-  } catch (err) {
-    res.status(500).json({ error: "Error adding employee", details: err.message });
+  } catch (error) {
+    res.status(500).json({ error: "Error adding employee", details: error.message });
   }
 };
 
-// Update Employee
+// Update Employee by ID
 exports.updateEmployeeById = async (req, res) => {
   try {
     const { id } = req.params;
-    const photo = req.file ? `/uploads/${req.file.filename}` : undefined;
+    const photo = req.file ? `/uploads/employees/${req.file.filename}` : undefined;
 
     const updatedData = {
       ...req.body,
       ...(photo && { photo }),
+      socialMediaLinks: req.body.socialMediaLinks
+        ? JSON.parse(req.body.socialMediaLinks)
+        : undefined,
     };
 
     const updatedEmployee = await Employee.findByIdAndUpdate(id, updatedData, {
@@ -67,7 +68,7 @@ exports.getAllEmployees = async (req, res) => {
   }
 };
 
-// Delete Employee
+// Delete Employee by ID
 exports.deleteEmployeeById = async (req, res) => {
   try {
     const { id } = req.params;

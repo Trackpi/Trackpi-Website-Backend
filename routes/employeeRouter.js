@@ -1,14 +1,19 @@
-const express = require('express')
+const express = require("express");
+const multer = require("../middlewares/multer"); 
+const employeeController = require("../controllers/employeeController");
 
-const employeeController = require('../controllers/employeeController')
-const upload = require('../middlewares/multer')
+const router = express.Router();
 
-const router = express.Router()
+// Route to add an employee
+router.post("/employees", multer.single("image"), employeeController.addEmployee);
 
-router.post("/employees", upload.single("image"), employeeController.addEmployee);
+// Route to get all employees
 router.get("/employees", employeeController.getAllEmployees);
-router.put("/employees/:id", upload.single("image"), employeeController.updateEmployeeById);
-router.delete("/employees/:id", employeeController.deleteEmployeeById);
 
+// Route to update an employee by ID
+router.put("/employees/:id", multer.single("image"), employeeController.updateEmployeeById);
+
+// Route to delete an employee by ID
+router.delete("/employees/:id", employeeController.deleteEmployeeById);
 
 module.exports = router;
