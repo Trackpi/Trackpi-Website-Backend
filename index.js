@@ -27,14 +27,14 @@ const ensureFolderExists = (folderPath) => {
 
 ensureFolderExists(path.join(__dirname, "uploads/projects"));
 ensureFolderExists(path.join(__dirname, "uploads/videos"));
-ensureFolderExists(path.join(__dirname, "uploads/images"));
+ensureFolderExists(path.join(__dirname, "uploads/interns"));
 
 // Connect to database
 connectDB();
 
 app.use("/api/projects", projectRouter);
 app.use("/api/videos", videoRouter);
-app.use("/api/videos", interRouter);
+app.use("/api/interns", interRouter);
 
 app.listen(3001,()=>{
     console.log("server is running");

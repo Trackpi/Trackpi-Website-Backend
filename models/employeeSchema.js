@@ -25,7 +25,7 @@ const employeeSchema = new mongoose.Schema({
         instagram: { type: String, trim: true },
         linkedin: { type: String, trim: true },
     },
-}, { timestamps: true });
+});
 
 const Employee = mongoose.model('Employee', employeeSchema);
 module.exports = Employee;
