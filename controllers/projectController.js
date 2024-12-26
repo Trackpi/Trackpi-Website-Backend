@@ -23,3 +23,4 @@ exports.submitProject = async (req, res) => {
       res.status(500).json({ error: 'Failed to submit project' });
     }
   };
+  

@@ -2,17 +2,20 @@ const video = require("../models/videoSchema");
 
 exports.addVideo = async (req, res) => {
   try {
-    const { videourl } = req.body;
-    if (videourl) {
-      const newVideo = new video({ videourl });
-      await newVideo.save();
-      res.status(201).json("Video Added Successfully");
-    } else {
-      res.status(400).json("Please Enter Video URL");
+    // Validate if a file was uploaded
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
     }
+
+    const videoUrl = req.file.path; // Get the uploaded file path
+
+    const newVideo = new video({ videoUrl });
+    await newVideo.save();
+
+    res.status(201).json({ message: "Video Added Successfully", video: newVideo });
   } catch (err) {
-    console.log(err);
-    res.status(500).json(err);
+    console.error("Error adding video:", err.message);
+    res.status(500).json({ error: "An error occurred while adding the video" });
   }
 };
 

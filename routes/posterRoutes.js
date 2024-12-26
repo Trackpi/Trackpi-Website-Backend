@@ -1,4 +1,5 @@
 
+
 const express = require('express');
 const router = express.Router();
 const posterController = require('../controllers/posterController');
@@ -12,3 +13,4 @@ router.patch('/updatePoster/:id', upload.single('posterimage'), posterController
 router.delete('/deletePoster/:id', posterController.deletePoster);
 
 module.exports = router;
+
