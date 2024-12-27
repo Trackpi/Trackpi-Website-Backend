@@ -1,140 +1,181 @@
-const { response } = require("express")
-const adminModel = require("../models/adminSchema")
-const { use } = require("../routes/adminRouter")
-const jwt =require('jsonwebtoken')
-//getAllAdmin
-exports.getadmins=(req,res)=>{
-    adminModel.find()
-    .then(response=>{
-        res.status(200).json(response)
-    })
-    .catch(err=>{
-        console.log(err)
-        res.status(406).json(response)
-    })
-}
+const adminModel = require("../models/adminSchema");
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
-
-//deleteAdmin
-exports.deleteadmin=(req,res)=>{
-    const user=req.user
-    const adminid=req.params.id
-   if(user)
-   {
-    adminModel.findOne({_id:user})
-    .then(()=>{
-        adminModel.findOneAndDelete({_id:adminid})
-        .then(response=>{
-            res.status(200).json(response)
-        })
-        .catch(err=>{
-            console.log(err)
-            res.status(406).json({err:'admin id not founded'})
-        })
-    })
-    .catch(err=>{
-        console.log(err)
-        res.status(406).json({err:'you dont have credintial'})
-    })
-   }
-   else{
-    res.status(406).json({err:'failed to delete'})
-   }
-}
-
-
-
-//addadmin
-exports.addadmin=(req,res)=>{
-    const user=req.user
-    const data=req.body
-if(user && data.username && data.password &&data.adminType)
-   {
-    adminModel.findOne({_id:user})
-    .then(()=>{
-        adminModel.create(data)
-        .then(response=>{
-            res.status(200).json(response)
-        })
-        .catch(err=>{
-            console.log(err)
-            res.status(406).json(response)
-        })
-    })
-    .catch(err=>{
-        console.log(err)
-        res.status(406).json({err:'you dont have credintial'})
-    })
-   }
-   else{
-    res.status(406).json({err:'failed to add'})
-   }
-}
-
-
-// edit admin
-
-exports.editadmin=(req,res)=>{
-    const user=req.user
-    const data=req.body
-    console.log(data)
-if(user && data.username && data.password &&data.adminType)
-   {
-    adminModel.findOne({_id:user})
-    .then(()=>{
-       adminModel.findOne({username:data.username})
-       .then(userdata=>{
-        userdata.username=data.username
-        userdata.password=data.password
-        userdata.adminType=data.adminType
-        adminModel.findOneAndUpdate({_id:userdata._id},userdata)
-        .then(()=>{
-            res.status(200).json(userdata)
-        })
-        .catch(err=>{
-            console.log(err)
-            res.status(406).json({err:'error to edit'})
-        })
-       })
-       .catch(err=>{
-        console.log(err)
-        res.status(406).json({err:'error to edit'})
-    })
-    })
-    .catch(err=>{
-        console.log(err)
-        res.status(406).json({err:'you dont have credintial'})
-    })
-   }
-   else{
-    res.status(406).json({err:'failed to add'})
-   }
-}
-
-
-
-//admin login
-exports.adminlogin=(req,res)=>{
-    const data=req.body
-
-    if(data.username && data.password)
-    {
-        adminModel.findOne({username:data.username})
-        .then(response=>{
-            if(response.password==data.password)
-            {
-             const jwtid=   jwt.sign({_id:response._id},process.env.JWT_KEY)
-             res.status(200).json(jwtid)
-            }
-            else{
-                res.stataus(406).json({err:'data not found'}) 
-            }
-        })
-        .catch(err=>{
-            res.status(406).json({err:'data not found'})
-        })
+// getAllAdmin
+exports.getadmins = async (req, res) => {
+    try {
+        const response = await adminModel.find();
+        res.status(200).json(response);
+    } catch (err) {
+        console.log(err);
+        res.status(406).json({
+            err: 'server side error'
+        });
     }
-    else{
-        res.stataus(406).json({err:'data not found'})
+};
+
+// deleteAdmin
+exports.deleteadmin = async (req, res) => {
+    try {
+        const user = req.user;
+        const adminid = req.params.id;
+
+        if (!user) {
+            return res.status(406).json({
+                err: 'failed to delete'
+            });
+        }
+
+        // Verify the admin credentials
+        const foundUser = await adminModel.findOne({
+            _id: user
+        });
+        if (!foundUser) {
+            return res.status(406).json({
+                err: 'you dont have credentials'
+            });
+        }
+
+        // Proceed to delete the admin by ID
+        const response = await adminModel.findOneAndDelete({
+            _id: adminid
+        });
+        if (!response) {
+            return res.status(406).json({
+                err: 'admin id not found'
+            });
+        }
+
+        res.status(200).json(response);
+
+    } catch (err) {
+        console.log(err);
+        res.status(406).json({
+            err: 'server side error'
+        });
     }
-}
+};
+
+// addAdmin
+exports.addadmin = async (req, res) => {
+    try {
+        const user = req.user;
+        const data = req.body;
+
+        if (!user || !data.username || !data.password || !data.adminType) {
+            return res.status(406).json({
+                err: 'failed to add'
+            });
+        }
+
+        // Verify the admin credentials
+        const foundUser = await adminModel.findOne({
+            _id: user
+        });
+        if (!foundUser) {
+            return res.status(406).json({
+                err: 'you dont have credentials'
+            });
+        }
+
+        // Hash the password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(data.password, salt);
+        data.password = hashedPassword;
+
+        // Create new admin
+        const response = await adminModel.create(data);
+        res.status(200).json(response);
+
+    } catch (err) {
+        console.log(err);
+        res.status(406).json({
+            err: 'server side error'
+        });
+    }
+};
+
+// editAdmin
+exports.editadmin = async (req, res) => {
+    try {
+        const user = req.user;
+        const data = req.body;
+
+        if (!user || !data.username || !data.password || !data.adminType) {
+            return res.status(406).json({
+                err: 'failed to edit'
+            });
+        }
+
+        // Verify the admin credentials
+        const foundUser = await adminModel.findOne({
+            _id: user
+        });
+        if (!foundUser) {
+            return res.status(406).json({
+                err: 'you dont have credentials'
+            });
+        }
+
+        // Update admin
+        const response = await adminModel.findOneAndUpdate({
+                _id: data._id
+            },
+            data, {
+                new: true
+            }
+        );
+
+        if (!response) {
+            return res.status(406).json({
+                err: 'error updating admin'
+            });
+        }
+
+        res.status(200).json(response);
+
+    } catch (err) {
+        console.log(err);
+        res.status(406).json({
+            err: 'server side error'
+        });
+    }
+};
+
+// adminLogin
+exports.adminlogin = async (req, res) => {
+    try {
+        const data = req.body;
+
+        if (!data.username || !data.password) {
+            return res.status(406).json({
+                err: 'data not found'
+            });
+        }
+
+        const response = await adminModel.findOne({
+            username: data.username
+        });
+        if (!response || !(await bcrypt.compare(data.password, response.password))) {
+            return res.status(406).json({
+                err: 'invalid credentials'
+            });
+        }
+
+        // Generate JWT token
+        const jwtid = jwt.sign({
+                _id: response._id
+            },
+            process.env.JWT_KEY
+        );
+
+        res.status(200).json(jwtid);
+
+    } catch (err) {
+        console.log(err);
+        res.status(406).json({
+            err: 'server side error'
+        });
+    }
+};
