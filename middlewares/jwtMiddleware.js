@@ -1,4 +1,6 @@
 const jwt = require('jsonwebtoken');
+const adminModel = require('../models/adminSchema');
+const { response } = require('express');
 
 // Secret key for JWT signing and verification
 const secretKey = process.env.JWT_KEY // Use your secret key here
@@ -19,10 +21,23 @@ const verifyJwt=(req, res, next) =>{
     const jwtId = decodedToken._id;
 
     if (jwtId) {
-      console.log(`JWT ID (jti): ${jwtId}`);
-      req.jwtId = jwtId; // Attach JWT ID to the request object
-      req.user = decodedToken;  // Optionally attach the entire decoded token (e.g., user info) to req.user
-      next();  // Proceed to the next middleware or route handler
+      adminModel.findOne({_id:jwtId})
+      .then(response=>{
+        if(response.isActive)
+        {
+          console.log(`JWT ID (jti): ${jwtId}`);
+          req.jwtId = jwtId; // Attach JWT ID to the request object
+          req.user = decodedToken;  // Optionally attach the entire decoded token (e.g., user info) to req.user
+          next();  // Proceed to the next middleware or route handler
+        }
+        else{
+          res.status(406).json({err:'your account is deactivated . Cant perform any Activity'})
+        }
+      })
+      .catch(err=>{
+        res.status(406).json({err:'error to verify jwt'})
+      })
+      
     } else {
       return res.status(400).json({ message: 'JWT ID (jti) is missing in the token' });
     }
