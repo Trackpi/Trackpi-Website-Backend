@@ -96,13 +96,12 @@ exports.addadmin = async (req, res) => {
     }
 };
 
-// editAdmin
 exports.editadmin = async (req, res) => {
     try {
         const user = req.user;
         const data = req.body;
 
-        if (!user || !data.username || !data.password || !data.adminType) {
+        if (!user || !data.username || !data.adminType) {
             return res.status(406).json({
                 err: 'failed to edit'
             });
@@ -118,13 +117,17 @@ exports.editadmin = async (req, res) => {
             });
         }
 
+        // Check if the password is being updated and hash it
+        if (data.password) {
+            const salt = await bcrypt.genSalt(10);
+            data.password = await bcrypt.hash(data.password, salt);
+        }
+
         // Update admin
         const response = await adminModel.findOneAndUpdate({
                 _id: data._id
             },
-            data, {
-                new: true
-            }
+            data
         );
 
         if (!response) {
@@ -143,11 +146,13 @@ exports.editadmin = async (req, res) => {
     }
 };
 
+
 // adminLogin
 exports.adminlogin = async (req, res) => {
     try {
-        const data = req.body;
-
+        console.log(req.body)
+        const  data = req.body;
+        
         if (!data.username || !data.password) {
             return res.status(406).json({
                 err: 'data not found'
