@@ -6,16 +6,17 @@ const cors = require('cors')
 const fs = require("fs");
 const path = require("path");
 require('./config/connection')
-adminRoute=require('./routes/adminRouter')
+const adminRoute=require('./routes/adminRouter')
 const projectRouter = require("./routes/projectRouter");
 const videoRouter = require("./routes/videoRouter");
 const interRouter = require('./routes/interRouter')
-
+const formRouter = require('./routes/formRouter')
 const app =express()
 app.use(express.json({ limit: "10mb" }))
 app.use(express.urlencoded({ limit: "10mb",extended: true }));
 app.use(cors())
 app.use(adminRoute)
+app.use(formRouter)
 
 
 // Ensure folders exist
