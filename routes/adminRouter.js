@@ -4,7 +4,7 @@ const verifyJwt = require('../middlewares/jwtMiddleware')
 const router=express.Router()
 
 //get admin
-router.get('/admin',adminControler.getadmins)
+router.get('/admin',verifyJwt,adminControler.getadmins)
 
 //delete admin
 router.delete('/admin/:id',verifyJwt,adminControler.deleteadmin)
