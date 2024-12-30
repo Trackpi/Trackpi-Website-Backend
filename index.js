@@ -1,13 +1,15 @@
 require("dotenv").config();
 const express = require("express");
-const cors = require('cors');
+const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
 
 const connectDB = require("./config/connection");
-const adminRoute = require('./routes/adminRouter');
+const adminRoute = require("./routes/adminRouter");
 const projectRouter = require("./routes/projectRouter");
-const posterRoutes = require('./routes/posterRoutes');
+const posterRoutes = require("./routes/posterRoutes");
+const internRoute = require("./routes/interRouter");
+const salesRoute = require("./routes/salesRouter");
 
 const app = express();
 
@@ -16,19 +18,21 @@ app.use(express.json());
 app.use(cors());
 
 // Ensure the uploads folder exists
-const uploadDir = path.join(__dirname, 'uploads');
+const uploadDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true }); // Creates 'uploads' folder if it doesn't exist
 }
 
 // Connect to database
 connectDB();
-console.log('MongoDB URI:', process.env.CONNECTION_STRING);
-
+console.log("MongoDB URI:", process.env.CONNECTION_STRING);
 
 // Routes
 app.use("/api/projects", projectRouter);
 app.use("/api/posters", posterRoutes);
+app.use("/api/interns", internRoute);
+app.use("/api/sales", salesRoute);
+
 app.use(adminRoute);
 
 app.listen(3001, () => {
