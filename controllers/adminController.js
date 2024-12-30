@@ -79,10 +79,10 @@ exports.addadmin = async (req, res) => {
             });
         }
 
-        // Hash the password
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(data.password, salt);
-        data.password = hashedPassword;
+        // Commenting out the password hashing logic
+        // const salt = await bcrypt.genSalt(10);
+        // const hashedPassword = await bcrypt.hash(data.password, salt);
+        // data.password = hashedPassword;
 
         // Create new admin
         const response = await adminModel.create(data);
@@ -119,8 +119,9 @@ exports.editadmin = async (req, res) => {
 
         // Check if the password is being updated and hash it
         if (data.password) {
-            const salt = await bcrypt.genSalt(10);
-            data.password = await bcrypt.hash(data.password, salt);
+            // Commenting out the password hashing logic
+            // const salt = await bcrypt.genSalt(10);
+            // data.password = await bcrypt.hash(data.password, salt);
         }
 
         // Update admin
@@ -146,12 +147,11 @@ exports.editadmin = async (req, res) => {
     }
 };
 
-
 // adminLogin
 exports.adminlogin = async (req, res) => {
     try {
         console.log(req.body)
-        const  data = req.body;
+        const data = req.body;
         
         if (!data.username || !data.password) {
             return res.status(406).json({
@@ -162,7 +162,7 @@ exports.adminlogin = async (req, res) => {
         const response = await adminModel.findOne({
             username: data.username
         });
-        if (!response || !(await bcrypt.compare(data.password, response.password))) {
+        if (!response || data.password !== response.password) { // Password comparison without hashing
             return res.status(406).json({
                 err: 'invalid credentials'
             });
