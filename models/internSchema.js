@@ -2,38 +2,32 @@ const mongoose = require("mongoose");
 
 const internSchema = new mongoose.Schema(
   {
-    empID: {
-      type: Number,
-      required: true,
-      unique: true,
-    },
-    empName: {
+    userName: { type: String, required: true },
+    employeeId: { type: String, required: true, unique: true },
+    email: { type: String, required: true, unique: true },
+    phoneNumber: { type: String, required: true },
+    fullAddress: { type: String, required: true },
+    gender: { type: String, enum: ["Male", "Female", "Other"], required: true },
+    dob: { type: Date, required: true },
+    bloodGroup: { type: String, required: true },
+    dateOfJoining: { type: Date, required: true },
+    jobRole: { type: String, required: true },
+    employeeStatus: {
       type: String,
-      required: true,
-    },
-    designation: {
-      type: String,
-      required: true,
-    },
-    photo: {
-      type: String,
-    },
-    description: {
-      type: String,
-    },
-    socialMediaLinks: {
-      facebook: { type: String, trim: true },
-      instagram: { type: String, trim: true },
-      linkedin: { type: String, trim: true },
-    },
-    emptype: {
-      type: String,
-      enum: ["Intern", "Sales"],
+      enum: ["Full time", "Part time"],
       required: true,
     },
+    jobLevel: { type: String, required: true },
+    socialLinks: {
+      instagram: { type: String },
+      linkedin: { type: String },
+      twitter: { type: String },
+    },
+    feedback: { type: String },
+    profileImage: { type: String },
+    certificate: { type: String },
   },
   { timestamps: true }
 );
 
-const Intern = mongoose.model("Interns", internSchema);
-module.exports = Intern;
+module.exports = mongoose.model("Intern", internSchema);

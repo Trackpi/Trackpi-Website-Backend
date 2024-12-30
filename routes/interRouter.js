@@ -1,19 +1,22 @@
 const express = require("express");
-const multer = require("../middlewares/multer"); 
+const upload = require("../middlewares/multer");
+const router = express.Router();
 const internController = require("../controllers/internController");
 
-const router = express.Router();
-
-// Route to add an intern
-router.post("/interns", multer.single("image"), internController.addIntern);
-
-// Route to get all interns
-router.get("/interns", internController.getAllInterns);
-
-// Route to update an intern by ID
-router.put("/interns/:id", multer.single("image"), internController.updateInternById);
-
-// Route to delete an intern by ID
-router.delete("/interns/:id", internController.deleteInternById);
+router.get(
+  "/",
+  upload.array("file"),
+  (req, res, next) => {
+    console.log("File received:", req.file);
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+    next();
+  },
+  internController.getAllInterns
+);
+router.post("/", internController.addIntern);
+router.put("/:id", internController.updateIntern);
+router.delete("/:id", internController.deleteIntern);
 
 module.exports = router;
