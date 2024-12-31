@@ -5,26 +5,33 @@ const salesController = require("../controllers/salesController");
 
 // Route to add a new sales record
 router.post(
-  "/add",
-  upload.array("file"),
+  "/add",  upload.fields([
+    { name: "profileImage", maxCount: 1 },
+    { name: "businessCard", maxCount: 1 },
+  ]),
   (req, res, next) => {
-    console.log("File received:", req.file);
-    if (!req.file) {
-      return res.status(400).json({ message: "No file uploaded" });
+    console.log("Files received:", req.files);
+    if (!req.files.profileImage || !req.files.businessCard) {
+      return res.status(400).json({ message: "Required files missing" });
     }
     next();
   },
-  salesController.addSales
+  salesController.addSalesEmployee
 );
 
+
+
 // Route to get all sales records
-router.get("/", salesController.getAllSales);
+router.get("/", salesController.getSalesEmployees);
 
 // Route to get a single sales record by ID
 router.get("/:id", salesController.getSalesById);
 
 // Route to update a sales record by ID
-router.put("/:id", upload, salesController.updateSales);
+router.put("/:id",  upload.fields([
+  { name: "profileImage", maxCount: 1 },
+  { name: "businessCard", maxCount: 1 },
+]),salesController.updateSales);
 
 // Route to delete a sales record by ID
 router.delete("/:id", salesController.deleteSales);

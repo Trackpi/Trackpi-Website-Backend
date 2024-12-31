@@ -1,6 +1,5 @@
 const adminModel = require("../models/adminSchema");
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
 
 // getAllAdmin
 exports.getadmins = async (req, res) => {

@@ -5,7 +5,7 @@ const internController = require("../controllers/internController");
 
 router.get(
   "/",
-  upload.array("file"),
+  upload.single("file"),
   (req, res, next) => {
     console.log("File received:", req.file);
     if (!req.file) {
