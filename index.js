@@ -9,7 +9,7 @@ const adminRoute = require("./routes/adminRouter");
 const projectRouter = require("./routes/projectRouter");
 const posterRoutes = require("./routes/posterRoutes");
 const internRoute = require("./routes/interRouter");
-const salesRoute = require("./routes/salesRouter");
+const salesRoutes = require("./routes/salesRouter");
 
 const app = express();
 
@@ -31,7 +31,7 @@ console.log("MongoDB URI:", process.env.CONNECTION_STRING);
 app.use("/api/projects", projectRouter);
 app.use("/api/posters", posterRoutes);
 app.use("/api/interns", internRoute);
-app.use("/api/sales", salesRoute);
+app.use("/api/sales", salesRoutes);
 
 app.use(adminRoute);
 
