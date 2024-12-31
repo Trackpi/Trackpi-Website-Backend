@@ -8,7 +8,7 @@ const connectDB = require("./config/connection");
 const adminRoute = require("./routes/adminRouter");
 const projectRouter = require("./routes/projectRouter");
 const posterRoutes = require("./routes/posterRoutes");
-const internRoute = require("./routes/interRouter");
+const internRoute = require("./routes/internRouter");
 const salesRoutes = require("./routes/salesRouter");
 
 const app = express();

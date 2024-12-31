@@ -2,32 +2,25 @@ const mongoose = require("mongoose");
 
 const internSchema = new mongoose.Schema(
   {
-    userName: { type: String, required: true },
-    employeeId: { type: String, required: true, unique: true },
-    email: { type: String, required: true, unique: true },
-    phoneNumber: { type: String, required: true },
-    fullAddress: { type: String, required: true },
-    gender: { type: String, enum: ["Male", "Female", "Other"], required: true },
-    dob: { type: Date, required: true },
-    bloodGroup: { type: String, required: true },
-    dateOfJoining: { type: Date, required: true },
-    jobRole: { type: String, required: true },
-    employeeStatus: {
-      type: String,
-      enum: ["Full time", "Part time"],
-      required: true,
-    },
-    jobLevel: { type: String, required: true },
-    socialLinks: {
-      instagram: { type: String },
-      linkedin: { type: String },
-      twitter: { type: String },
-    },
-    feedback: { type: String },
-    profileImage: { type: String },
-    certificate: { type: String },
-  },
-  { timestamps: true }
+  username: { type: String, required: true },
+  employeeID: { type: String, required: true, unique: true },
+  email: { type: String, required: true, unique: true },
+  phone: { type: String, required: true },
+  address: { type: String, required: true },
+  gender: { type: String, required: true },
+  dob: { type: Date, required: true },
+  bloodgroup: { type: String, required: true },
+  doj: { type: Date, required: true },
+  jobrole: { type: String, required: true },
+  empsatus: { type: String, required: true },
+  joblevel: { type: String, required: true },
+  instagram: { type: String },
+  linkedin: { type: String },
+  twitter: { type: String },
+  feedback: { type: String },
+  profileImage: { type: String },
+  Certificate: { type: String },
+  }
 );
 
 module.exports = mongoose.model("Intern", internSchema);
