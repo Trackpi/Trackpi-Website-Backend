@@ -8,7 +8,7 @@ const salesController = require("../controllers/salesController");
 
 // Route to add a new sales record
 router.post(
-  "/add",verifyJWT,  upload.fields([
+  "/",verifyJWT, upload.fields([
     { name: "profileImage", maxCount: 1 },
     { name: "businessCard", maxCount: 1 },
   ]),
