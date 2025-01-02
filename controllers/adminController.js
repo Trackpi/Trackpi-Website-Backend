@@ -1,6 +1,5 @@
 const adminModel = require("../models/adminSchema");
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
 
 // getAllAdmin
 exports.getadmins = async (req, res) => {
@@ -63,7 +62,7 @@ exports.addadmin = async (req, res) => {
         const user = req.user;
         const data = req.body;
 
-        if (!user || !data.username || !data.password || !data.adminType) {
+        if (!user || !data.username || !data.password || !data.adminType || !data.email) {
             return res.status(406).json({
                 err: 'failed to add'
             });
@@ -159,9 +158,17 @@ exports.adminlogin = async (req, res) => {
             });
         }
 
-        const response = await adminModel.findOne({
+       if(!data.username.includes('@gmail.com'))
+       {
+        var response = await adminModel.findOne({
             username: data.username
         });
+       }
+       else{
+        var response = await adminModel.findOne({
+            email: data.username
+        });
+       }
         if (!response || data.password !== response.password) { // Password comparison without hashing
             return res.status(406).json({
                 err: 'invalid credentials'
