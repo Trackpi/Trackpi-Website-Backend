@@ -2,6 +2,8 @@ const SalesEmployee = require("../models/salesSchema");
 
 // Add a new sales employee
 exports.addSalesEmployee = async (req, res) => {
+
+  // console.log(req.userid)
   try {
     const { body, files } = req;
 

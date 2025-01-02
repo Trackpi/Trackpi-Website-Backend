@@ -1,7 +1,10 @@
 const Intern = require("../models/internSchema");
 
+
 // Add a new intern
 exports.addIntern = async (req, res) => {
+  // console.log("sdfghj");
+  
   try {
     const { body, files } = req;
 
