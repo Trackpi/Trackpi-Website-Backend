@@ -1,11 +1,14 @@
 const express = require("express");
 const upload = require("../middlewares/multer");
+const verifyJWT = require('../middlewares/jwtMiddleware')
+
+
 const router = express.Router();
 const salesController = require("../controllers/salesController");
 
 // Route to add a new sales record
 router.post(
-  "/add",  upload.fields([
+  "/add",verifyJWT,  upload.fields([
     { name: "profileImage", maxCount: 1 },
     { name: "businessCard", maxCount: 1 },
   ]),
