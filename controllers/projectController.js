@@ -1,31 +1,56 @@
 const Project = require('../models/projectSchema'); // Adjust if your project model is located elsewhere
-
 exports.submitProject = async (req, res) => {
-    
-    try {
-      console.log('Request body:', req.body);  // Log the body data
-    console.log('Uploaded file:', req.file); 
-      // Extract project details from the request body
-      const {
-        fullName, contactNumber, emailAddress, projectName, problemSolved,
-        beneficiaries, successReason, skills, summary
-      } = JSON.parse(req.body.data);
-  
-      const filePath = req.file ? req.file.path : null;
-  
-      const project = new Project({
-        fullName, contactNumber, emailAddress, projectName, problemSolved,
-        beneficiaries, successReason, skills, summary, file: filePath
-      });
-  
-      await project.save();
-      res.status(201).json({ message: 'Project submitted successfully', project });
-    } catch (error) {
-      console.error('Error saving project:', error.message);
-      res.status(500).json({ error: 'Failed to submit project' });
+  try {
+    console.log("Request body:", req.body); // Log the body data
+    console.log("Uploaded file:", req.file); // Log the file
+
+    // Destructure the project data directly from req.body
+    const {
+      fullName,
+      contactNumber,
+      emailAddress,
+      projectName,
+      problemSolved,
+      beneficiaries,
+      successReason,
+      skills,
+      summary,
+    } = req.body;
+
+    // Check if required fields are missing
+    if (!fullName || !contactNumber || !emailAddress || !projectName || !problemSolved) {
+      return res.status(400).json({ error: "Missing required fields" });
     }
-  };
-  // Get all projects
+
+    // Handle file path
+    const filePath = req.file ? req.file.path : null;
+
+    // Create new Project document
+    const project = new Project({
+      fullName,
+      contactNumber,
+      emailAddress,
+      projectName,
+      problemSolved,
+      beneficiaries,
+      successReason,
+      skills,
+      summary,
+      file: filePath,
+    });
+
+    // Save the project to the database
+    await project.save();
+
+    // Return success response
+    res.status(201).json({ message: 'Project submitted successfully', project });
+  } catch (error) {
+    console.error("Error details:", error); // Log the full error
+    res.status(500).json({ error: 'Failed to submit project', details: error.message });
+  }
+};
+
+// Get all projects
 exports.getAllProjects = async (req, res) => {
   try {
     const projects = await Project.find(); // Retrieve all projects
