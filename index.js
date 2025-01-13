@@ -1,10 +1,10 @@
-require("dotenv").config();
+const dotenv= require("dotenv");
 const express = require("express");
 const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
 
-const connectDB = require("./config/connection");
+const connectDB = require("./config/connection")
 const adminRoute = require("./routes/adminRouter");
 const projectRouter = require("./routes/projectRouter");
 const posterRoutes = require("./routes/posterRoutes");
@@ -16,7 +16,7 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cors());
-
+dotenv.config({path:'./.env'})
 // Ensure the uploads folder exists
 const uploadDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadDir)) {
@@ -35,6 +35,6 @@ app.use("/api/sales", salesRoutes);
 
 app.use(adminRoute);
 
-app.listen(3001, () => {
-  console.log("server is running on port 3001");
-});
+app.listen(3001,()=>{
+  console.log("server is running @ http://localhost:3001")
+})

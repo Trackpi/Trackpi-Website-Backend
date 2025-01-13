@@ -4,7 +4,7 @@ const upload = require('../middlewares/multer'); // Assuming you have multer in 
 const projectController = require('../controllers/projectController'); // Controller to handle the logic
 
 // Route for submitting a project (with file upload)
-router.post('/submit', upload.single('file'), projectController.submitProject);
+router.post('/submit', upload.single('projectFile'), projectController.submitProject);
 
 // Route to get all projects
 router.get('/getAllProjects', projectController.getAllProjects);
