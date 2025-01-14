@@ -6,18 +6,22 @@ const employeeSchema = new mongoose.Schema({
         required: true,
         unique: true,
     },
-    empName: {
+    name: {
         type: String,
         required: true,
     },
-    designation: {
+    email: {
         type: String,
         required: true,
     },
-    photo: {
+    desig: {
+        type: String,
+        required: true,
+    },
+    image: {
         type: String, 
     },
-    description: {
+    selfIntroduction: {
         type: String,
     },
     socialMediaLinks: {
