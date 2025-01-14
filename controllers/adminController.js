@@ -100,7 +100,7 @@ exports.addAdmin = async (req, res) => {
     }
   };
 
-  exports.editAdmin = async (req, res) => {
+exports.editAdmin = async (req, res) => {
     try {
       const user = req.user; // Authenticated user
       const { id } = req.params; // Admin ID to update
@@ -307,20 +307,36 @@ exports.adminLogin = async (req, res) => {
 // };
 
 exports.adminStatusUpdate = async (req, res) => {
-    const { id } = req.params;  // The ID of the admin whose status is being updated
-    const { isActive } = req.body;  // The new status (true or false)
+  const { id } = req.params; // The ID of the admin whose status is being updated
+  const { status } = req.body; // The button value ("activate" or "deactivate")
 
-    try {
-        // Find and update the admin's isActive status
-        const admin = await adminModel.findByIdAndUpdate(id, { isActive }, { new: true });
+  try {
+      // Validate the input
+      if (!["activate", "deactivate"].includes(status)) {
+          return res.status(400).json({ message: "Invalid status value. Use 'activate' or 'deactivate'." });
+      }
 
-        if (!admin) {
-            return res.status(404).json({ message: "Admin not found." });
-        }
+      // Map "activate" to true and "deactivate" to false
+      const isActive = status === "activate";
 
-        res.status(200).json({ message: "Admin status updated.", admin });
-    } catch (error) {
-        console.error("Error updating admin status:", error);
-        res.status(500).json({ message: "Internal server error." });
-    }
+      // Update the admin's isActive status in the database
+      const updatedAdmin = await adminModel.findByIdAndUpdate(
+          id,
+          { isActive }, // Update the isActive field
+          { new: true } // Return the updated document
+      );
+
+      if (!updatedAdmin) {
+          return res.status(404).json({ message: "Admin not found." });
+      }
+
+      // Respond with the updated admin details
+      res.status(200).json({
+          message: `Admin successfully ${status}d.`,
+          admin: updatedAdmin,
+      });
+  } catch (error) {
+      console.error("Error updating admin status:", error);
+      res.status(500).json({ message: "Internal server error." });
+  }
 };
