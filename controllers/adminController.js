@@ -47,7 +47,7 @@ exports.deleteAdmin = async (req, res) => {
       });
     }
 
-    res.status(200).json(response);
+    res.status(200).json({ message:"Admin Deleted Successfully!!!"});
   } catch (err) {
     console.log(err);
     res.status(406).json({
@@ -100,30 +100,33 @@ exports.addAdmin = async (req, res) => {
     }
   };
 
-exports.editAdmin = async (req, res) => {
+  exports.editAdmin = async (req, res) => {
     try {
       const user = req.user; // Authenticated user
-      const { id } = req.params; // Extract the ID from the URL path
+      const { id } = req.params; // Admin ID to update
       const data = req.body;
   
       console.log('Authenticated User:', user);
       console.log('Request Data:', data);
       console.log('Admin ID to Edit:', id);
   
-      // Validate that the data includes at least one field to update
+      // Validate required data
       if (!user || !id || (!data.username && !data.email && !data.adminType && !data.password)) {
         return res.status(400).json({ err: 'Missing required fields or no fields to update' });
       }
   
-      // Verify the admin credentials (check if the authenticated user exists)
-      const foundUser = await adminModel.findOne({ _id: user });
+      // Check if the authenticated user has valid credentials
+      const foundUser = await adminModel.findById(user._id);
       if (!foundUser) {
         return res.status(403).json({ err: 'You do not have credentials to edit an admin' });
       }
   
-      // Ensure the authenticated user is not trying to edit their own details (optional logic)
-      if (foundUser._id.toString() === id) {
-        return res.status(403).json({ err: 'You cannot edit your own account' });
+      // Check if the new email already exists for another admin
+      if (data.email) {
+        const emailExists = await adminModel.findOne({ email: data.email, _id: { $ne: id } });
+        if (emailExists) {
+          return res.status(409).json({ err: 'Email already exists for another admin' });
+        }
       }
   
       // Hash the password if it's being updated
@@ -132,10 +135,10 @@ exports.editAdmin = async (req, res) => {
         data.password = await bcrypt.hash(data.password, salt);
       }
   
-      // Update admin details
+      // Update the admin details
       const updatedAdmin = await adminModel.findOneAndUpdate(
-        { _id: id }, // Use the extracted admin ID from the path
-        { $set: data }, // Update the fields provided in the request
+        { _id: id },
+        { $set: data },
         { new: true, runValidators: true } // Return updated document and enforce schema validation
       );
   
@@ -151,7 +154,9 @@ exports.editAdmin = async (req, res) => {
       console.error('Error in editAdmin:', err);
       res.status(500).json({ err: 'Server-side error' });
     }
-};
+  };
+  
+  
 // adminLogin
 // exports.adminLogin = async (req, res) => {
 
@@ -247,12 +252,7 @@ exports.adminLogin = async (req, res) => {
     return res.status(200).json({
       message: 'Successfully logged in',
       token: jwtToken,
-      response: {
-        username: response.username,
-        email: response.email,
-        adminType: response.adminType,
-        isActive: response.isActive,
-      },
+     
     });
   } catch (err) {
     console.error('Error during admin login:', err);

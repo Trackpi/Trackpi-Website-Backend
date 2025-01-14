@@ -32,6 +32,8 @@ app.use("/api/projects", projectRouter);
 app.use("/api/posters", posterRoutes);
 app.use("/api/interns", internRoute);
 app.use("/api/sales", salesRoutes);
+app.use("/assets",express.static(path.join(__dirname,"uploads","projects")));
+// console.log(path.join(__dirname,"uploads","projects","1736697702064.pdf"));
 
 app.use(adminRoute);
 
