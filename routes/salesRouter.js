@@ -1,21 +1,24 @@
 const express = require("express");
 const upload = require("../middlewares/multer");
 const verifyJWT = require('../middlewares/jwtMiddleware')
-
+const salesController = require("../controllers/salesController");
 
 const router = express.Router();
-const salesController = require("../controllers/salesController");
+
 
 // Route to add a new sales record
 router.post(
   "/",verifyJWT, upload.fields([
-    { name: "profileImage", maxCount: 1 },
+    { name: "image", maxCount: 1 },
     { name: "businessCard", maxCount: 1 },
   ]),
   (req, res, next) => {
     console.log("Files received:", req.files);
-    if (!req.files.profileImage || !req.files.businessCard) {
-      return res.status(400).json({ message: "Required files missing" });
+    if (!req.files.image || !req.files.businessCard) {
+      return res.status(400).json({ 
+        status: 400, 
+        message: "Required files are missing: image, businessCard" 
+      });
     }
     next();
   },
@@ -32,8 +35,8 @@ router.get("/:id", salesController.getSalesById);
 
 // Route to update a sales record by ID
 router.put("/:id",  upload.fields([
-  { name: "profileImage", maxCount: 1 },
-  { name: "businessCard", maxCount: 1 },
+  { name: "profileimage", maxCount: 1 },
+  { name: "businesscard", maxCount: 1 },
 ]),salesController.updateSales);
 
 // Route to delete a sales record by ID

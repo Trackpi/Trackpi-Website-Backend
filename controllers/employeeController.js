@@ -1,19 +1,19 @@
 const Employee = require("../models/employeeSchema");
-
+const { v4: uuidv4 } = require('uuid');
 // Add Employee
 exports.addEmployee = async (req, res) => {
   try {
     console.log('Request Body:', req.body);
     console.log('Uploaded File:', req.file);
     const {
-      empID,
+      
       name,
       email,
       desig,
       selfIntroduction,
       socialMediaLinks,
     } = req.body;
-
+    const empID = uuidv4(); // Generate a unique empID
     const photo = req.file ? `/uploads/employees/${req.file.filename}` : null;
 
     const employee = new Employee({

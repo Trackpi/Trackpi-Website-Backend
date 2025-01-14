@@ -1,5 +1,5 @@
 const SalesEmployee = require("../models/salesSchema");
-
+const { v4: uuidv4 } = require('uuid');
 // Add a new sales employee
 exports.addSalesEmployee = async (req, res) => {
 
@@ -9,18 +9,19 @@ exports.addSalesEmployee = async (req, res) => {
 
     // Validate required fields
     const requiredFields = [
-      "username",
-      "employeeID",
+      "name",
+      "empID",
       "email",
       "phone",
-      "address",
+      "fullAddress",
       "gender",
       "dob",
-      "bloodgroup",
-      "doj",
-      "jobrole",
-      "empsatus",
-      "joblevel",
+      "bloodGroup",
+      "dateOfJoining",
+      "jobRole",
+      "employeeStatus",
+      "jobLevel",
+      
     ];
     for (const field of requiredFields) {
       if (!body[field]) {
@@ -31,10 +32,13 @@ exports.addSalesEmployee = async (req, res) => {
     // Extract file paths
     const profileImage = files?.profileImage?.[0]?.path || null;
     const businessCard = files?.businessCard?.[0]?.path || null;
-
+    const eID = uuidv4(); // Generate a unique empID
+   
+   
     // Create new employee record
     const newEmployee = new SalesEmployee({
       ...body,
+      eID,
       profileImage,
       businessCard,
     });
@@ -55,8 +59,8 @@ exports.getSalesEmployees = async (req, res) => {
 
     // Build search query
     const query = search
-      ? { $or: [{ username: new RegExp(search, "i") }, { jobrole: new RegExp(search, "i") }] }
-      : {};
+    ? { $or: [{ name: new RegExp(search, "i") }, { jobRole: new RegExp(search, "i") }] }
+    : {};
 
     // Paginate results
     const employees = await SalesEmployee.find(query)

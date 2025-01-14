@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 
 const employeeSchema = new mongoose.Schema({
     empID: {
-        type: Number,
-        required: true,
+        type: String,
+        
         unique: true,
     },
     name: {
@@ -12,7 +12,7 @@ const employeeSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        required: true,
+        
     },
     desig: {
         type: String,
