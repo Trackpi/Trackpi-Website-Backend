@@ -1,5 +1,5 @@
 const SalesEmployee = require("../models/salesSchema");
-const { v4: uuidv4 } = require('uuid');
+
 // Add a new sales employee
 exports.addSalesEmployee = async (req, res) => {
 
@@ -23,29 +23,42 @@ exports.addSalesEmployee = async (req, res) => {
       "jobLevel",
       
     ];
-    for (const field of requiredFields) {
-      if (!body[field]) {
-        return res.status(400).json({ message: `Missing required field: ${field}` });
-      }
-    }
+ // Check if empID is provided and valid
+ if (!body.empID || body.empID.trim() === "") {
+  return res.status(400).json({ message: "Employee ID is required" });
+}
+
+console.log("empID received:", body.empID);
+// Check if any required fields are missing
+for (const field of requiredFields) {
+  if (!body[field]) {
+    return res.status(400).json({ message: `Missing required field: ${field}` });
+  }
+}
+
+// Check if empID is unique
+const existingEmployee = await SalesEmployee.findOne({ empID: body.empID });
+if (existingEmployee) {
+  return res.status(400).json({ message: "Employee ID already exists" });
+}
 
     // Extract file paths
     const profileImage = files?.profileImage?.[0]?.path || null;
     const businessCard = files?.businessCard?.[0]?.path || null;
-    const eID = uuidv4(); // Generate a unique empID
+    
    
    
     // Create new employee record
     const newEmployee = new SalesEmployee({
       ...body,
-      eID,
+      empID: body.empID,
       profileImage,
       businessCard,
     });
 
     // Save to database
     const savedEmployee = await newEmployee.save();
-    res.status(201).json({ message: "Employee added successfully", data: savedEmployee });
+    res.status(201).json({ message: "Employee added successfully", savedEmployee });
   } catch (error) {
     console.error("Error adding employee:", error);
     res.status(500).json({ message: "Error adding employee", error });

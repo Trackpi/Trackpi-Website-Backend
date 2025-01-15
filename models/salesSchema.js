@@ -1,8 +1,10 @@
 const mongoose = require("mongoose");
 
 const salesEmployeeSchema = new mongoose.Schema({
+  image:{type:String},
+  businessCard:{type:String},
   name: { type: String, required: true },
-  empID: { type: String, required: true },
+  empID: { type: String, unique: true , required: true },
   email: { type: String, required: true, unique: true },
   phone: { type: String, required: true },
   fullAddress: { type: String, required: true },
@@ -16,9 +18,7 @@ const salesEmployeeSchema = new mongoose.Schema({
   instagram: { type: String },
   linkedin: { type: String },
   twitter: { type: String },
-  feedback:{type: String},
-  profileImage: { type: String },
-  businessCard: { type: String },
+ 
 });
 
 module.exports = mongoose.model("SalesEmployee", salesEmployeeSchema);
