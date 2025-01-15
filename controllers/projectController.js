@@ -1,8 +1,17 @@
 const Project = require('../models/projectSchema'); // Adjust if your project model is located elsewhere
+
+
 exports.submitProject = async (req, res) => {
   try {
     console.log("Request body:", req.body); // Log the body data
     console.log("Uploaded file:", req.file); // Log the file
+
+    if (!req.file) {
+      return res.status(400).json({ error: "File upload is required" });
+    }
+
+    // Get the original filename from req.file
+    const { originalname } = req.file;
 
     // Destructure the project data directly from req.body
     const {
@@ -23,9 +32,9 @@ exports.submitProject = async (req, res) => {
     }
 
     // Handle file path
-    const filePath = req.file ? req.file.path : null;
+    const filePath = `http://localhost:${process.env.PORT}/uploads/projects/${req.file.filename}`;
 
-    // Create new Project document
+    // Create a new project document
     const project = new Project({
       fullName,
       contactNumber,
@@ -36,19 +45,27 @@ exports.submitProject = async (req, res) => {
       successReason,
       skills,
       summary,
-      file: filePath,
+      file: filePath,  // Full file path
+      fileName: originalname, // Original filename
     });
 
     // Save the project to the database
     await project.save();
 
     // Return success response
-    res.status(201).json({ message: 'Project submitted successfully', project });
+    res.status(201).json({
+      message: "Project submitted successfully",
+      project,
+    });
   } catch (error) {
     console.error("Error details:", error); // Log the full error
-    res.status(500).json({ error: 'Failed to submit project', details: error.message });
+    res.status(500).json({
+      error: "Failed to submit project",
+      details: error.message,
+    });
   }
 };
+
 
 // Get all projects
 exports.getAllProjects = async (req, res) => {
