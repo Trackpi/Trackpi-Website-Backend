@@ -10,6 +10,8 @@ const projectRouter = require("./routes/projectRouter");
 const posterRoutes = require("./routes/posterRoutes");
 const internRoute = require("./routes/internRouter");
 const salesRoutes = require("./routes/salesRouter");
+const newsRouter = require("./routes/newsRouter");
+const footerRouter = require("./routes/footerVideoRouter");
 
 const app = express();
 
@@ -23,6 +25,10 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true }); // Creates 'uploads' folder if it doesn't exist
 }
 
+// Serve static files from the 'uploads' folder
+app.use('/uploads', express.static(uploadDir));
+
+
 // Connect to database
 connectDB();
 console.log("MongoDB URI:", process.env.CONNECTION_STRING);
@@ -32,6 +38,8 @@ app.use("/api/projects", projectRouter);
 app.use("/api/posters", posterRoutes);
 app.use("/api/interns", internRoute);
 app.use("/api/sales", salesRoutes);
+app.use("/api/news", newsRouter);
+app.use("/api/footer", footerRouter);
 
 app.use(adminRoute);
 
