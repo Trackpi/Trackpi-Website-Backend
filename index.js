@@ -11,6 +11,8 @@ const posterRoutes = require("./routes/posterRoutes");
 const employeeRouter = require("./routes/employeeRouter");
 const internRoute = require("./routes/internRouter");
 const salesRoutes = require("./routes/salesRouter");
+const newsRouter = require("./routes/newsRouter");
+const footerRouter = require("./routes/footerVideoRouter");
 
 const app = express();
 
@@ -24,6 +26,10 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true }); // Creates 'uploads' folder if it doesn't exist
 }
 
+// Serve static files from the 'uploads' folder
+app.use('/uploads', express.static(uploadDir));
+
+
 // Connect to database
 connectDB();
 console.log("MongoDB URI:", process.env.CONNECTION_STRING);
@@ -34,6 +40,8 @@ app.use("/api/posters", posterRoutes);
 app.use("/api/employee", employeeRouter);
 app.use("/api/interns", internRoute);
 app.use("/api/sales", salesRoutes);
+app.use("/api/news", newsRouter);
+app.use("/api/footer", footerRouter);
 app.use("/assets",express.static(path.join(__dirname,"uploads","projects")));
 // console.log(path.join(__dirname,"uploads","projects","1736697702064.pdf"));
 
