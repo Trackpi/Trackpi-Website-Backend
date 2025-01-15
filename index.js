@@ -8,6 +8,7 @@ const connectDB = require("./config/connection")
 const adminRoute = require("./routes/adminRouter");
 const projectRouter = require("./routes/projectRouter");
 const posterRoutes = require("./routes/posterRoutes");
+const employeeRouter = require("./routes/employeeRouter");
 const internRoute = require("./routes/internRouter");
 const salesRoutes = require("./routes/salesRouter");
 const newsRouter = require("./routes/newsRouter");
@@ -36,10 +37,13 @@ console.log("MongoDB URI:", process.env.CONNECTION_STRING);
 // Routes
 app.use("/api/projects", projectRouter);
 app.use("/api/posters", posterRoutes);
+app.use("/api/employee", employeeRouter);
 app.use("/api/interns", internRoute);
 app.use("/api/sales", salesRoutes);
 app.use("/api/news", newsRouter);
 app.use("/api/footer", footerRouter);
+app.use("/assets",express.static(path.join(__dirname,"uploads","projects")));
+// console.log(path.join(__dirname,"uploads","projects","1736697702064.pdf"));
 
 app.use(adminRoute);
 

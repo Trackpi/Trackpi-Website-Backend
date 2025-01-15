@@ -3,11 +3,14 @@ const Employee = require("../models/employeeSchema");
 // Add Employee
 exports.addEmployee = async (req, res) => {
   try {
+    console.log('Request Body:', req.body);
+    console.log('Uploaded File:', req.file);
     const {
       empID,
-      empName,
-      designation,
-      description,
+      name,
+      email,
+      desig,
+      selfIntroduction,
       socialMediaLinks,
     } = req.body;
 
@@ -15,16 +18,18 @@ exports.addEmployee = async (req, res) => {
 
     const employee = new Employee({
       empID,
-      empName,
-      designation,
-      photo,
-      description,
+      name,
+      email,
+      desig,
+      image:photo,
+      selfIntroduction,
       socialMediaLinks: JSON.parse(socialMediaLinks || '{}'),
     });
 
     await employee.save();
     res.status(201).json({ message: "Employee added successfully", employee });
   } catch (error) {
+    console.error('Error:', error.message);
     res.status(500).json({ error: "Error adding employee", details: error.message });
   }
 };
@@ -33,11 +38,11 @@ exports.addEmployee = async (req, res) => {
 exports.updateEmployeeById = async (req, res) => {
   try {
     const { id } = req.params;
-    const photo = req.file ? `/uploads/employees/${req.file.filename}` : undefined;
+    const image = req.file ? `/uploads/employees/${req.file.filename}` : undefined;
 
     const updatedData = {
       ...req.body,
-      ...(photo && { photo }),
+      ...(image && { image }),
       socialMediaLinks: req.body.socialMediaLinks
         ? JSON.parse(req.body.socialMediaLinks)
         : undefined,
