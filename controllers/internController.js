@@ -1,5 +1,9 @@
 const Intern = require("../models/internSchema");
-
+// Function to generate a unique employeeID if not provided
+const generateEmployeeID = () => {
+  // Generate employeeID (for example, by combining current date and random number)
+  return 'EMP-' + new Date().getTime() + Math.floor(Math.random() * 1000);
+};
 
 // Add a new intern
 exports.addIntern = async (req, res) => {
@@ -14,31 +18,44 @@ exports.addIntern = async (req, res) => {
 
     // Validate required fields
     const requiredFields = [
-      "username",
-      "employeeID",
+      "name",
+      "empID",
       "email",
       "phone",
-      "address",
+      "fullAddress",
       "gender",
       "dob",
-      "bloodgroup",
-      "doj",
-      "jobrole",
-      "empsatus",
-      "joblevel",
+      "bloodGroup",
+      "dateOfJoining",
+      "jobRole",
+      "employeeStatus",
+      "jobLevel",
+      "feedback",
+      
     ];
     for (const field of requiredFields) {
       if (!body[field]) {
         return res.status(400).json({ message: `Missing required field: ${field}` });
       }
     }
+        // Ensure that employeeID is not null or empty
+    if (!body.empID || body.empID.trim() === '') {
+      body.empID = generateEmployeeID();  // Generate employeeID if not provided
+    }
 
+    // Validate employeeID (check if it already exists)
+    const existingIntern = await Intern.findOne({ empID: body.empID });
+    if (existingIntern) {
+      return res.status(400).json({ message: 'Intern with this Employee ID already exists.' });
+    }
     // Create new intern
     const newIntern = new Intern({
       ...body,
       profileImage,
       Certificate: certificate,
     });
+
+        
 
     // Save to database
     const savedIntern = await newIntern.save();
@@ -82,6 +99,14 @@ exports.updateIntern = async (req, res) => {
     // File paths
     const profileImage = files?.profileImage?.[0]?.path || null;
     const certificate = files?.Certificate?.[0]?.path || null;
+      
+      // Check for duplicate empID
+    if (body.empID) {
+      const existingIntern = await Intern.findOne({ empID: body.empID, _id: { $ne: id } });
+      if (existingIntern) {
+        return res.status(400).json({ message: `Employee ID "${body.empID}" already exists.` });
+      }
+    }
 
     const updateData = {
       ...body,

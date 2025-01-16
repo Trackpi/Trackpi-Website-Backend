@@ -14,12 +14,12 @@ router.post(
   internController.addIntern
 );
 
-router.get("/", internController.getAllInterns);
+router.get("/internemp", internController.getAllInterns);
 
-router.get("/:id", internController.getInternById);
+router.get("/internemp/:id", internController.getInternById);
 
 router.put(
-  "/:id",
+  "/internemp/:id",
   upload.fields([
     { name: "profileImage", maxCount: 1 },
     { name: "Certificate", maxCount: 1 },
@@ -27,6 +27,6 @@ router.put(
   internController.updateIntern
 );
 
-router.delete("/:id", internController.deleteIntern);
+router.delete("/internemp/:id", internController.deleteIntern);
 
 module.exports = router;
