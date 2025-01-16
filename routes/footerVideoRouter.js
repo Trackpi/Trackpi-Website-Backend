@@ -5,14 +5,24 @@ const footerVideoController = require('../controllers/footerVideoController');
 
 const router = express.Router();
 
-// router.post(
-//     "/addfooterdetails",
-//     multer.fields([
-//       { name: "videos", maxCount: 3 }, // Allow up to 3 videos
-//       { name: "image", maxCount: 1 }, // Allow a single image
-//     ]),
-//     footerVideoController.addFooterVideoDetails
-//   );
+router.post(
+    "/addfootervideo",
+    multer.fields([
+      { name: "videofile1", maxCount: 1 },
+      { name: "videofile2", maxCount: 1 },
+      { name: "videofile3", maxCount: 1 },
+      { name: "imagefile", maxCount: 1 },
+    ]),
+    footerVideoController.createFooterVideo
+  );
 // update
-router.put("/updatefooterdetails", footerVideoController.updateFooterDetails);
+router.patch("/updatefooterdetails", multer.fields([
+    { name: "videofile1", maxCount: 1 },
+    { name: "videofile2", maxCount: 1 },
+    { name: "videofile3", maxCount: 1 },
+    { name: "imagefile", maxCount: 1 },
+  ]), footerVideoController.updateFooterVideo);
 module.exports = router;
+
+// get all footer detail
+router.get('/getfooterdetails', footerVideoController.getAllFooterData);
