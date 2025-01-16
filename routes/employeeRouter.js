@@ -3,6 +3,7 @@ const multer = require("../middlewares/multer");
 const employeeController = require("../controllers/employeeController");
 
 const router = express.Router();
+
 // Route to get all employees
 router.get("/employees", employeeController.getAllEmployees);
 
