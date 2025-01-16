@@ -51,6 +51,7 @@ app.use("/export", csvFileRouter);
 
 
 app.use("/assets",express.static(path.join(__dirname,"uploads","projects")));
+
 // console.log(path.join(__dirname,"uploads","projects","1736697702064.pdf"));
 
 app.use(adminRoute);

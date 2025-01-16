@@ -14,14 +14,14 @@ exports.addEmployee = async (req, res) => {
       socialMediaLinks,
     } = req.body;
     const empID = uuidv4(); // Generate a unique empID
-    const photo = req.file ? `/uploads/employees/${req.file.filename}` : null;
+    const image = req.file ? `/uploads/employees/${req.file.filename}` : null;
 
     const employee = new Employee({
       empID,
       name,
       email,
       desig,
-      image:photo,
+      image,
       selfIntroduction,
       socialMediaLinks: JSON.parse(socialMediaLinks || '{}'),
     });
@@ -38,11 +38,11 @@ exports.addEmployee = async (req, res) => {
 exports.updateEmployeeById = async (req, res) => {
   try {
     const { id } = req.params;
-    const image = req.file ? `/uploads/employees/${req.file.filename}` : undefined;
-
+    const uploadedImage = req.file ? `/uploads/employees/${req.file.filename}` : image;
+    console.log('Uploaded File Path:', photo);
     const updatedData = {
       ...req.body,
-      ...(image && { image }),
+      ...(image && { image: uploadedImage }),
       socialMediaLinks: req.body.socialMediaLinks
         ? JSON.parse(req.body.socialMediaLinks)
         : undefined,

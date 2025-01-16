@@ -1,9 +1,5 @@
 const Intern = require("../models/internSchema");
 // Function to generate a unique employeeID if not provided
-const generateEmployeeID = () => {
-  // Generate employeeID (for example, by combining current date and random number)
-  return 'EMP-' + new Date().getTime() + Math.floor(Math.random() * 1000);
-};
 
 // Add a new intern
 exports.addIntern = async (req, res) => {
@@ -30,7 +26,7 @@ exports.addIntern = async (req, res) => {
       "jobRole",
       "employeeStatus",
       "jobLevel",
-      "feedback",
+      
       
     ];
     for (const field of requiredFields) {
@@ -38,16 +34,17 @@ exports.addIntern = async (req, res) => {
         return res.status(400).json({ message: `Missing required field: ${field}` });
       }
     }
-        // Ensure that employeeID is not null or empty
-    if (!body.empID || body.empID.trim() === '') {
-      body.empID = generateEmployeeID();  // Generate employeeID if not provided
-    }
+    // Check if empID is provided and valid
+ if (!body.empID || body.empID.trim() === "") {
+  return res.status(400).json({ message: "Employee ID is required" });
+}
 
     // Validate employeeID (check if it already exists)
     const existingIntern = await Intern.findOne({ empID: body.empID });
     if (existingIntern) {
       return res.status(400).json({ message: 'Intern with this Employee ID already exists.' });
     }
+     
     // Create new intern
     const newIntern = new Intern({
       ...body,
@@ -58,21 +55,21 @@ exports.addIntern = async (req, res) => {
         
 
     // Save to database
-    const savedIntern = await newIntern.save();
-    res.status(201).json({ message: "Intern added successfully", data: savedIntern });
+   await newIntern.save();
+    res.status(201).json({ message: "Intern added successfully",newIntern  });
   } catch (error) {
-    console.error("Error adding intern:", error);
-    res.status(500).json({ message: "Error adding intern", error });
+    console.error("Error adding intern:",  error.message);
+    res.status(500).json({ message: "Error adding intern", details: error.message });
   }
 };
 
 // Get all interns
 exports.getAllInterns = async (req, res) => {
   try {
-    const interns = await Intern.find();
-    res.status(200).json(interns);
+    const newInterns = await Intern.find();
+    res.status(200).json(newInterns);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching interns", error });
+    res.status(500).json({ message: "Error fetching interns", details: error.message });
   }
 };
 
@@ -80,6 +77,13 @@ exports.getAllInterns = async (req, res) => {
 exports.getInternById = async (req, res) => {
   try {
     const { id } = req.params;
+    // Check if the provided ID is a valid ObjectId
+if (!mongoose.Types.ObjectId.isValid(id)) {
+  return res.status(400).json({ message: "Invalid ID format" });
+}
+
+// Proceed with the query after ensuring the ID is valid
+
     const intern = await Intern.findById(id);
     if (!intern) {
       return res.status(404).json({ message: "Intern not found" });
@@ -94,6 +98,7 @@ exports.getInternById = async (req, res) => {
 exports.updateIntern = async (req, res) => {
   try {
     const { id } = req.params;
+     
     const { body, files } = req;
 
     // File paths
@@ -108,19 +113,23 @@ exports.updateIntern = async (req, res) => {
       }
     }
 
-    const updateData = {
-      ...body,
-      ...(profileImage && { profileImage }),
-      ...(certificate && { Certificate: certificate }),
-    };
+    const updateData = { ...body}
+    if (profileImage) updateData.profileImage = profileImage;
+    if (certificate) updateData.Certificate = certificate;
+      
+    
 
-    const updatedIntern = await Intern.findByIdAndUpdate(id, updateData, { new: true });
+    const updatedIntern = await Intern.findByIdAndUpdate(id, updateData, { new: true ,
+      runValidators: true,});
     if (!updatedIntern) {
       return res.status(404).json({ message: "Intern not found" });
     }
     res.status(200).json({ message: "Intern updated successfully", data: updatedIntern });
+    
   } catch (error) {
+    console.error("Error updating intern:", error.message);
     res.status(500).json({ message: "Error updating intern", error });
+    
   }
 };
 

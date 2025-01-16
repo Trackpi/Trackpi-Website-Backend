@@ -51,48 +51,29 @@ if (existingEmployee) {
     // Create new employee record
     const newEmployee = new SalesEmployee({
       ...body,
-      empID: body.empID,
+     
       profileImage,
       businessCard,
     });
 
     // Save to database
-    const savedEmployee = await newEmployee.save();
-    res.status(201).json({ message: "Employee added successfully", savedEmployee });
+    await newEmployee.save();
+    res.status(201).json({ message: "Employee added successfully", newEmployee });
   } catch (error) {
-    console.error("Error adding employee:", error);
-    res.status(500).json({ message: "Error adding employee", error });
+    console.error("Error adding employee:", error.message);
+    res.status(500).json({ message: "Error adding employee",details: error.message });
   }
 };
 
 // Get all sales employees
 exports.getSalesEmployees = async (req, res) => {
   try {
-    const { page = 1, limit = 10, search } = req.query;
-
-    // Build search query
-    const query = search
-    ? { $or: [{ name: new RegExp(search, "i") }, { jobRole: new RegExp(search, "i") }] }
-    : {};
-
-    // Paginate results
-    const employees = await SalesEmployee.find(query)
-      .skip((page - 1) * limit)
-      .limit(parseInt(limit));
-
-    const total = await SalesEmployee.countDocuments(query);
-
-    res.status(200).json({
-      total,
-      page: parseInt(page),
-      limit: parseInt(limit),
-      data: employees,
-    });
+    const newEmployees = await SalesEmployee.find();
+    res.status(200).json(newEmployees);
   } catch (error) {
-    console.error("Error fetching employees:", error);
-    res.status(500).json({ message: "Error fetching employees", error });
+    res.status(500).json({ error: "Error fetching employees", details: error.message });
   }
-};
+}
 
 // Get a single sales employee by ID
 exports.getSalesById = async (req, res) => {
@@ -120,7 +101,13 @@ exports.updateSales = async (req, res) => {
     // Extract file paths
     const profileImage = files?.profileImage?.[0]?.path || undefined;
     const businessCard = files?.businessCard?.[0]?.path || undefined;
-
+   // Check for duplicate empID
+   if (body.empID) {
+    const existingSalesEmployee = await SalesEmployee.findOne({ empID: body.empID, _id: { $ne: id } });
+    if (existingSalesEmployee) {
+      return res.status(400).json({ message: `Employee ID "${body.empID}" already exists.` });
+    }
+  }
     // Prepare update data
     const updateData = { ...body };
     if (profileImage) updateData.profileImage = profileImage;
