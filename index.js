@@ -13,6 +13,8 @@ const internRoute = require("./routes/internRouter");
 const salesRoutes = require("./routes/salesRouter");
 const newsRouter = require("./routes/newsRouter");
 const footerRouter = require("./routes/footerVideoRouter");
+const formRouter = require("./routes/formRouter");
+const csvFileRouter = require("./routes/csvFileRouter")
 
 const app = express();
 
@@ -27,7 +29,9 @@ if (!fs.existsSync(uploadDir)) {
 }
 
 // Serve static files from the 'uploads' folder
-app.use('/uploads', express.static(uploadDir));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
 
 
 // Connect to database
@@ -42,11 +46,15 @@ app.use("/api/interns", internRoute);
 app.use("/api/sales", salesRoutes);
 app.use("/api/news", newsRouter);
 app.use("/api/footer", footerRouter);
+app.use("/contactForm", formRouter);
+app.use("/export", csvFileRouter);
+
+
 app.use("/assets",express.static(path.join(__dirname,"uploads","projects")));
 // console.log(path.join(__dirname,"uploads","projects","1736697702064.pdf"));
 
 app.use(adminRoute);
 
-app.listen(3001,()=>{
-  console.log("server is running @ http://localhost:3001")
+app.listen(process.env.PORT,()=>{
+  console.log(`server is running @ http://localhost:${process.env.PORT}`)
 })
