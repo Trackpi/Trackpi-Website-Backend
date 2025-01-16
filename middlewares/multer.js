@@ -12,8 +12,8 @@ const storage = multer.diskStorage({
       folder = "uploads/videos";
     } else if (req.baseUrl.includes("images")) {
       folder = "uploads/images";
-    } else if (req.baseUrl.includes("partners")) {
-      folder = "uploads/partners";
+    } else if (req.baseUrl.includes("partner")) {
+      folder = "uploads/partner";
     } else if (req.baseUrl.includes("posters")) {
       folder = "uploads/posters";
     } else if (req.baseUrl.includes("news")) {

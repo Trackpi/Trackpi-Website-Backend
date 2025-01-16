@@ -13,6 +13,7 @@ const internRoute = require("./routes/internRouter");
 const salesRoutes = require("./routes/salesRouter");
 const newsRouter = require("./routes/newsRouter");
 const footerRouter = require("./routes/footerVideoRouter");
+const partnerRouter = require("./routes/partnershipRouter");
 
 const app = express();
 
@@ -42,6 +43,7 @@ app.use("/api/interns", internRoute);
 app.use("/api/sales", salesRoutes);
 app.use("/api/news", newsRouter);
 app.use("/api/footer", footerRouter);
+app.use("/api/partner", partnerRouter);
 app.use("/assets",express.static(path.join(__dirname,"uploads","projects")));
 // console.log(path.join(__dirname,"uploads","projects","1736697702064.pdf"));
 
