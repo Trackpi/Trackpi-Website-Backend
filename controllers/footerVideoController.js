@@ -1,104 +1,85 @@
-const footerVideo = require('../models/footerVideoSchema'); // Adjust the path as needed
+const FooterVideo = require('../models/footerVideoSchema');
 
-exports.addFooterVideoDetails = async (req, res) => {
-    const { videoCategory, videoUrl, videoFile, footerBannerImage } = req.body;
-
-    const uploadedFile = req.file ? `/uploads/videos/${req.file.filename}` : videoFile;
-
-    try {
-        // Ensure at least one field to add
-        if (!videoCategory && !footerBannerImage) {
-            return res.status(400).json({ error: "Either videoCategory or footerBannerImage must be provided" });
-        }
-
-        // If adding a video to a category
-        if (videoCategory) {
-            if (!['footerVideo1', 'footerVideo2', 'footerVideo3'].includes(videoCategory)) {
-                return res.status(400).json({ error: "Invalid video category" });
-            }
-            if (!videoUrl) {
-                return res.status(400).json({ error: "videoUrl is required" });
-            }
-
-            const newVideo = {
-                videoUrl,
-                videoFile: uploadedFile,
-            };
-
-            const updatedDocument = await footerVideo.findOneAndUpdate(
-                {},
-                { $push: { [videoCategory]: newVideo } },
-                { new: true, upsert: true, runValidators: true }
-            );
-
-            return res.status(200).json(updatedDocument);
-        }
-
-        // If adding or updating the banner image
-        if (footerBannerImage) {
-            const updatedDocument = await footerVideo.findOneAndUpdate(
-                {},
-                { footerBannerImage },
-                { new: true, upsert: true, runValidators: true }
-            );
-
-            return res.status(200).json(updatedDocument);
-        }
-    } catch (error) {
-        console.error("Error adding footer video details:", error.message);
-        res.status(500).json({ error: "Internal server error" });
-    }
-}
-
-
-
-// exports.editFooterVideoDetails = async (req, res) => {
-//     const { id } = req.params; // ID of the document to update
-//     const { videoCategory, videoIndex, videoUrl, videoFile, footerBannerImage } = req.body;
-
-//     const uploadedFile = req.file ? `/uploads/videos/${req.file.filename}` : videoFile;
-
+// exports.addFooterVideoDetails = async (req, res) => {
+//     const { url } =req.body
 //     try {
-//         if (!id) {
-//             return res.status(400).json({ error: "Document ID is required" });
-//         }
-
-//         // Check which part of the document to update
-//         const updateQuery = {};
-//         if (videoCategory && videoIndex !== undefined) {
-//             if (!['footerVideo1', 'footerVideo2', 'footerVideo3'].includes(videoCategory)) {
-//                 return res.status(400).json({ error: "Invalid video category" });
-//             }
-
-//             // Dynamically construct the path for the array update
-//             const pathToUpdate = `${videoCategory}.${videoIndex}`;
-//             updateQuery[pathToUpdate] = {
-//                 videoUrl,
-//                 videoFile: uploadedFile,
-//             };
-//         }
-
-//         if (footerBannerImage) {
-//             updateQuery.footerBannerImage = footerBannerImage;
-//         }
-
-//         if (Object.keys(updateQuery).length === 0) {
-//             return res.status(400).json({ error: "No valid fields to update" });
-//         }
-
-//         const updatedDocument = await footerVideo.findByIdAndUpdate(
-//             id,
-//             { $set: updateQuery },
-//             { new: true, runValidators: true }
-//         );
-
-//         if (!updatedDocument) {
-//             return res.status(404).json({ error: "Document not found" });
-//         }
-
-//         res.status(200).json(updatedDocument);
-//     } catch (error) {
-//         console.error("Error updating footer video details:", error.message);
-//         res.status(500).json({ error: "Internal server error" });
+//       // Validate file uploads
+//       const videos = req.files.videos || [];
+//       const image = req.files.image ? req.files.image[0] : null;
+  
+//       if (videos.length < 3) {
+//         return res.status(400).json({ message: "3 videos are required." });
+//       }
+  
+//       if (!image) {
+//         return res.status(400).json({ message: "An image is required." });
+//       }
+  
+//       // Process file paths
+//       const videoDetails = videos.map((video) => ({
+//         fileName: `/uploads/footer/${video.filename}`,
+//         url: url,
+//       }));
+  
+//       const imageDetails = {
+//         file: image.filename,
+//         url: `/uploads/footer/${image.filename}`,
+//       };
+  
+//       // Save to the database
+//       let footerVideo = await FooterVideo.findOne();
+//       if (!footerVideo) {
+//         footerVideo = new FooterVideo({ videos: videoDetails, image: imageDetails });
+//       } else {
+//         footerVideo.videos = videoDetails;
+//         footerVideo.image = imageDetails;
+//       }
+  
+//       await footerVideo.save();
+  
+//       res.status(201).json({ message: "Footer details added successfully", footerVideo });
+//     } catch (err) {
+//       console.error("Error adding footer video details:", err.message);
+//       res.status(500).json({ error: "An error occurred while adding footer details" });
 //     }
-// };
+//   };
+
+
+exports.updateFooterDetails = async (req, res) => {
+  try {
+    const { heading, videos } = req.body;
+
+    let footerVideo = await FooterVideo.findOne();
+    if (!footerVideo) {
+      footerVideo = new FooterVideo(); // If no record exists, create a new one
+    }
+
+    // Update the heading if provided
+    if (heading) {
+      footerVideo.heading = heading;
+    }
+
+    // Update the videos if provided
+    if (videos && Array.isArray(videos)) {
+      videos.forEach((video, index) => {
+        if (footerVideo.videos[index]) {
+          // Update existing video
+          footerVideo.videos[index].fileName = video.fileName || footerVideo.videos[index].fileName;
+          footerVideo.videos[index].url = video.url || footerVideo.videos[index].url;
+        } else {
+          // Add new video if less than 3
+          footerVideo.videos.push(video);
+        }
+      });
+
+      // Ensure the length of videos array is <= 3
+      footerVideo.videos = footerVideo.videos.slice(0, 3);
+    }
+
+    await footerVideo.save();
+    res.status(200).json({ message: "Footer details updated successfully", footerVideo });
+  } catch (err) {
+    console.error("Error updating footer details:", err.message);
+    res.status(500).json({ error: "An error occurred while updating footer details" });
+  }
+};

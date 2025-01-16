@@ -1,9 +1,9 @@
-const Partners = require('../models/partnerSchema'); 
+const Partners = require('../models/partnershipSchema'); 
 
 // Create a new partner
 exports.createPartner = async (req, res) => {
   const {  companyname, description } = req.body;
-  const companylogo=req.file.filename
+  const companylogo=req.file ? `/uploads/partner/${req.file.filename}` : null;
 
   try {
     const newPartner = new Partners({
@@ -13,7 +13,7 @@ exports.createPartner = async (req, res) => {
     });
 
     await newPartner.save();
-    res.status(201).json({ message: 'Partner created successfully', newPartner });
+    res.status(200).json({ message: 'Partner created successfully', newPartner });
   } catch (error) {
     res.status(500).json({ message: 'Error creating partner', error });
   }
