@@ -2,11 +2,11 @@
 const express = require('express');
 const multer = require('../middlewares/multer');
 const footerVideoController = require('../controllers/footerVideoController');
-
+const verifyJwt = require('../middlewares/jwtMiddleware')
 const router = express.Router();
 
 router.post(
-    "/addfootervideo",
+    "/addfootervideo",verifyJwt,
     multer.fields([
       { name: "videofile1", maxCount: 1 },
       { name: "videofile2", maxCount: 1 },
@@ -16,7 +16,7 @@ router.post(
     footerVideoController.createFooterVideo
   );
 // update
-router.patch("/updatefooterdetails", multer.fields([
+router.patch("/updatefooterdetails",verifyJwt, multer.fields([
     { name: "videofile1", maxCount: 1 },
     { name: "videofile2", maxCount: 1 },
     { name: "videofile3", maxCount: 1 },
