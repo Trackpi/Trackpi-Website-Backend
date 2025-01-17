@@ -31,6 +31,23 @@ exports.submitProject = async (req, res) => {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
+    // Validate fullName
+    if (fullName.length < 3 || fullName.length > 64) {
+      return res.status(400).json({ error: "Full name must be between 3 and 64 characters" });
+    }
+
+    // Validate contactNumber
+    if (!/^\+\d{1,3}\s\d{7,12}$/.test(contactNumber)) {
+      return res.status(400).json({
+        error: "Phone number must include a valid country code (e.g., +91 9876543210) and be 7 to 12 digits long.",
+      });
+    }
+
+    // Validate emailAddress
+    if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(emailAddress)) {
+      return res.status(400).json({ error: "Please enter a valid email address" });
+    }
+
     // Handle file path
     const filePath = `http://localhost:${process.env.PORT}/uploads/projects/${req.file.filename}`;
 
@@ -45,7 +62,7 @@ exports.submitProject = async (req, res) => {
       successReason,
       skills,
       summary,
-      file: filePath,  // Full file path
+      file: filePath, // Full file path
       fileName: originalname, // Original filename
     });
 
@@ -65,6 +82,7 @@ exports.submitProject = async (req, res) => {
     });
   }
 };
+
 
 
 // Get all projects
