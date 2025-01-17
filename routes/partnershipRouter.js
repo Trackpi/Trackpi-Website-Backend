@@ -6,10 +6,10 @@ const upload = require('../middlewares/multer');
 // post a partner detail
 router.post('/createpartner', upload.single('companylogo'), partnerController.createPartner);
 
-// post all partner detail
+// get all partner detail
 router.get('/getpartner', partnerController.getAllPartners);
 
-// post a partner detail
+// delete a partner detail
 router.delete('/deletepartner/:id', partnerController.deletePartner);
 
 // update a partner detail
