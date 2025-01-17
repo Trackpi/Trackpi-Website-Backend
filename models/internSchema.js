@@ -2,18 +2,18 @@ const mongoose = require("mongoose");
 
 const internSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true },
-    empID: { type: String, unique: true , required: true },
-    email: { type: String, required: true, unique: true },
-    phone: { type: String, required: true },
-    fullAddress: { type: String, required: true },
-    gender: { type: String, required: true },
-    dob: { type: Date, required: true },
-    bloodGroup: { type: String, required: true },
-    dateOfJoining: { type: Date, required: true },
-    jobRole: { type: String, required: true },
-    employeeStatus: { type: String, required: true },
-    jobLevel: { type: String, required: true },
+    name: { type: String,  },
+    empID: { type: String },
+    email: { type: String, },
+    phone: { type: String, },
+    fullAddress: { type: String },
+    gender: { type: String },
+    dob: { type: Date },
+    bloodGroup: { type: String },
+    dateOfJoining: { type: Date},
+    jobRole: { type: String},
+    employeeStatus: { type: String},
+    jobLevel: { type: String},
     instagram: { type: String },
     linkedin: { type: String },
     twitter: { type: String },
@@ -23,4 +23,6 @@ const internSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Intern", internSchema);
+
+const Intern = mongoose.model('Intern', internSchema);
+module.exports = Intern;
