@@ -1,104 +1,127 @@
-const footerVideo = require('../models/footerVideoSchema'); // Adjust the path as needed
+const FooterVideo = require('../models/footerVideoSchema');
 
-exports.addFooterVideoDetails = async (req, res) => {
-    const { videoCategory, videoUrl, videoFile, footerBannerImage } = req.body;
-
-    const uploadedFile = req.file ? `/uploads/videos/${req.file.filename}` : videoFile;
-
+exports.createFooterVideo = async (req, res) => {
     try {
-        // Ensure at least one field to add
-        if (!videoCategory && !footerBannerImage) {
-            return res.status(400).json({ error: "Either videoCategory or footerBannerImage must be provided" });
-        }
+      // Check if a footer video document already exists
+      const existingDocument = await FooterVideo.findOne();
+      if (existingDocument) {
+        return res.status(400).json({
+          message: "A footer video configuration already exists. Please update it instead.",
+        });
+      }
+  
+      // Extract data from request body
+      const {
+        videourl1,
+        videourl2,
+        videourl3,
+        videoheading,
+        imageheading,
+      } = req.body;
 
-        // If adding a video to a category
-        if (videoCategory) {
-            if (!['footerVideo1', 'footerVideo2', 'footerVideo3'].includes(videoCategory)) {
-                return res.status(400).json({ error: "Invalid video category" });
-            }
-            if (!videoUrl) {
-                return res.status(400).json({ error: "videoUrl is required" });
-            }
+      const videofile1 = req.files ? `/uploads/footer/${req.files.videofile1[0].filename}` : null;
+      const videofile2 = req.files ? `/uploads/footer/${req.files.videofile2[0].filename}` : null;
+      const videofile3 = req.files ? `/uploads/footer/${req.files.videofile3[0].filename}` : null;
+      const imagefile = req.files ? `/uploads/footer/${req.files.imagefile[0].filename}` : null;
 
-            const newVideo = {
-                videoUrl,
-                videoFile: uploadedFile,
-            };
 
-            const updatedDocument = await footerVideo.findOneAndUpdate(
-                {},
-                { $push: { [videoCategory]: newVideo } },
-                { new: true, upsert: true, runValidators: true }
-            );
-
-            return res.status(200).json(updatedDocument);
-        }
-
-        // If adding or updating the banner image
-        if (footerBannerImage) {
-            const updatedDocument = await footerVideo.findOneAndUpdate(
-                {},
-                { footerBannerImage },
-                { new: true, upsert: true, runValidators: true }
-            );
-
-            return res.status(200).json(updatedDocument);
-        }
-    } catch (error) {
-        console.error("Error adding footer video details:", error.message);
-        res.status(500).json({ error: "Internal server error" });
+      // Create a new document
+      const newFooterVideo = new FooterVideo({
+        videofile1,
+        videourl1,
+        videofile2,
+        videourl2,
+        videofile3,
+        videourl3,
+        videoheading,
+        imagefile,
+        imageheading,
+      });
+  
+      await newFooterVideo.save();
+  
+      res.status(201).json({
+        message: "Footer video configuration created successfully",
+        footerVideo: newFooterVideo,
+      });
+    } catch (err) {
+      console.error("Error creating footer video configuration:", err.message);
+      if (err.code === 11000) {
+        // Handle unique constraint error
+        return res.status(400).json({
+          error: "A footer video configuration already exists. Please update it instead.",
+        });
+      }
+      res.status(500).json({ error: "An error occurred while creating the footer video configuration" });
     }
-}
+  };
 
-
-
-// exports.editFooterVideoDetails = async (req, res) => {
-//     const { id } = req.params; // ID of the document to update
-//     const { videoCategory, videoIndex, videoUrl, videoFile, footerBannerImage } = req.body;
-
-//     const uploadedFile = req.file ? `/uploads/videos/${req.file.filename}` : videoFile;
-
-//     try {
-//         if (!id) {
-//             return res.status(400).json({ error: "Document ID is required" });
-//         }
-
-//         // Check which part of the document to update
-//         const updateQuery = {};
-//         if (videoCategory && videoIndex !== undefined) {
-//             if (!['footerVideo1', 'footerVideo2', 'footerVideo3'].includes(videoCategory)) {
-//                 return res.status(400).json({ error: "Invalid video category" });
-//             }
-
-//             // Dynamically construct the path for the array update
-//             const pathToUpdate = `${videoCategory}.${videoIndex}`;
-//             updateQuery[pathToUpdate] = {
-//                 videoUrl,
-//                 videoFile: uploadedFile,
-//             };
-//         }
-
-//         if (footerBannerImage) {
-//             updateQuery.footerBannerImage = footerBannerImage;
-//         }
-
-//         if (Object.keys(updateQuery).length === 0) {
-//             return res.status(400).json({ error: "No valid fields to update" });
-//         }
-
-//         const updatedDocument = await footerVideo.findByIdAndUpdate(
-//             id,
-//             { $set: updateQuery },
-//             { new: true, runValidators: true }
-//         );
-
-//         if (!updatedDocument) {
-//             return res.status(404).json({ error: "Document not found" });
-//         }
-
-//         res.status(200).json(updatedDocument);
-//     } catch (error) {
-//         console.error("Error updating footer video details:", error.message);
-//         res.status(500).json({ error: "Internal server error" });
-//     }
-// };
+  exports.updateFooterVideo = async (req, res) => {
+    try {
+      // Check if the footer video configuration exists
+      const existingDocument = await FooterVideo.findOne();
+      if (!existingDocument) {
+        return res.status(404).json({
+          message: "Footer video configuration not found. Please create one first.",
+        });
+      }
+  
+      // Extract updated data from the request body
+      const {
+        videourl1,
+        videourl2,
+        videourl3,
+        videoheading,
+        imageheading,
+      } = req.body;
+  
+      // Handle uploaded files
+      const videofile1 = req.files?.videofile1
+        ? `/uploads/footer/${req.files.videofile1[0].filename}`
+        : existingDocument.videofile1;
+      const videofile2 = req.files?.videofile2
+        ? `/uploads/footer/${req.files.videofile2[0].filename}`
+        : existingDocument.videofile2;
+      const videofile3 = req.files?.videofile3
+        ? `/uploads/footer/${req.files.videofile3[0].filename}`
+        : existingDocument.videofile3;
+      const imagefile = req.files?.imagefile
+        ? `/uploads/footer/${req.files.imagefile[0].filename}`
+        : existingDocument.imagefile;
+  
+      // Update the document with new or existing data
+      existingDocument.videofile1 = videofile1;
+      existingDocument.videourl1 = videourl1 || existingDocument.videourl1;
+      existingDocument.videofile2 = videofile2;
+      existingDocument.videourl2 = videourl2 || existingDocument.videourl2;
+      existingDocument.videofile3 = videofile3;
+      existingDocument.videourl3 = videourl3 || existingDocument.videourl3;
+      existingDocument.videoheading = videoheading || existingDocument.videoheading;
+      existingDocument.imagefile = imagefile;
+      existingDocument.imageheading = imageheading || existingDocument.imageheading;
+  
+      // Save the updated document
+      await existingDocument.save();
+  
+      res.status(200).json({
+        message: "Footer video configuration updated successfully",
+        footerVideo: existingDocument,
+      });
+    } catch (err) {
+      console.error("Error updating footer video configuration:", err.message);
+      res.status(500).json({
+        error: "An error occurred while updating the footer video configuration",
+      });
+    }
+  };
+  
+  // Get all footer data
+exports.getAllFooterData = async (req, res) => {
+    try {
+      const footerVideos = await FooterVideo.find();
+      res.status(200).json(footerVideos);
+    } catch (error) {
+      res.status(500).json({ message: 'Error retrieving footer', error });
+    }
+  };
+  

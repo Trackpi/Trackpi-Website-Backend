@@ -1,39 +1,43 @@
-const mongoose=require('mongoose')
-const footerVideoSchema= new mongoose.Schema({
-    footerVideo1:[{
-        videoUrl:{
-            type:String,
-            required:true
-        },
-        videoFile:{
-            type:String,
-            required:true
-        },
-    }],
-    footerVideo2:[{
-        videoUrl:{
-            type:String,
-            required:true
-        },
-        videoFile:{
-            type:String,
-            required:true
-        },
-    }],
-    footerVideo3:[{
-        videoUrl:{
-            type:String,
-            required:true
-        },
-        videoFile:{
-            type:String,
-            required:true
-        },
-    }],
-    footerBannerImage:{
-        type:String,
-        required:true
-    }
-})
-const footerVideo=mongoose.model('footerVideo',footerVideoSchema)
-module.exports=footerVideo
+const mongoose = require("mongoose");
+
+const footerVideoSchema = new mongoose.Schema({
+  videofile1: {
+    type: String, 
+    required: false,
+  },
+  videourl1: {
+    type: String, 
+    required: false,
+  },
+  videofile2: {
+    type: String, 
+    required: false,
+  },
+  videourl2: {
+    type: String, 
+    required: false,
+  },
+  videofile3: {
+    type: String, 
+    required: false,
+  },
+  videourl3: {
+    type: String, 
+    required: false,
+  },
+  videoheading: {
+    type: String, 
+    required: false,
+  },
+  imagefile: {
+    type: String, 
+    required: false,
+  },
+  imageheading: {
+    type: String, 
+    required: false,
+  },
+});
+
+const FooterVideo = mongoose.model("FooterVideo", footerVideoSchema);
+module.exports = FooterVideo;
