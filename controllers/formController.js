@@ -7,7 +7,7 @@ exports.addForm = async (req, res) => {
 
     // Validate required fields
     if (!fullName || !phone || !email || !location || !info_from || !message) {
-      return res.status(400).json({ error: "Full name, phone, email, location, info_from, and message are required." });
+      return res.status(400).json({ error: "Fields required." });
     }
 
     // Validate country code in phone number
