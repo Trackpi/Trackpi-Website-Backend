@@ -1,4 +1,4 @@
-const Project = require('../models/projectSchema'); // Adjust if your project model is located elsewhere
+const Project = require('../models/projectSchema'); 
 
 
 exports.submitProject = async (req, res) => {
@@ -18,13 +18,17 @@ exports.submitProject = async (req, res) => {
       fullName,
       contactNumber,
       emailAddress,
+      qualification,
       projectName,
+      userType,
       problemSolved,
       beneficiaries,
       successReason,
       skills,
       summary,
+      institute_company
     } = req.body;
+    console.log(req.body,"request body");
 
     // Check if required fields are missing
     if (!fullName || !contactNumber || !emailAddress || !projectName || !problemSolved) {
@@ -49,20 +53,24 @@ exports.submitProject = async (req, res) => {
     }
 
     // Handle file path
-    const filePath = `http://localhost:${process.env.PORT}/uploads/projects/${req.file.filename}`;
+    const filePath = `http://${process.env.BASE_URL}:${process.env.PORT}/uploads/projects/${req.file.filename}`;
+    const file_path = `/uploads/projects/${req.file.filename}`
 
     // Create a new project document
     const project = new Project({
       fullName,
       contactNumber,
       emailAddress,
+      qualification,
       projectName,
+      userType,
       problemSolved,
       beneficiaries,
       successReason,
       skills,
       summary,
-      file: filePath, // Full file path
+      institute_company,
+      file: file_path, // Full file path
       fileName: originalname, // Original filename
     });
 
@@ -82,8 +90,6 @@ exports.submitProject = async (req, res) => {
     });
   }
 };
-
-
 
 // Get all projects
 exports.getAllProjects = async (req, res) => {
