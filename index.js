@@ -9,8 +9,7 @@ const adminRoute = require("./routes/adminRouter");
 const projectRouter = require("./routes/projectRouter");
 const posterRoutes = require("./routes/posterRoutes");
 const employeeRouter = require("./routes/employeeRouter");
-const internRoute = require("./routes/internRouter");
-const salesRoutes = require("./routes/salesRouter");
+
 const newsRouter = require("./routes/newsRouter");
 const footerRouter = require("./routes/footerVideoRouter");
 const partnerRouter = require("./routes/partnershipRouter");
@@ -43,8 +42,7 @@ console.log("MongoDB URI:", process.env.CONNECTION_STRING);
 app.use("/api/projects", projectRouter);
 app.use("/api/posters", posterRoutes);
 app.use("/api/employee", employeeRouter);
-app.use("/api/interns", internRoute);
-app.use("/api/sales", salesRoutes);
+
 app.use("/api/news", newsRouter);
 app.use("/api/footer", footerRouter);
 app.use("/api/partner", partnerRouter);
@@ -54,6 +52,7 @@ app.use("/export", csvFileRouter);
 
 
 app.use("/assets",express.static(path.join(__dirname,"uploads","projects")));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // console.log(path.join(__dirname,"uploads","projects","1736697702064.pdf"));
 
