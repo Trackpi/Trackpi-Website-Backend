@@ -14,8 +14,8 @@ const newsRouter = require("./routes/newsRouter");
 const footerRouter = require("./routes/footerVideoRouter");
 const partnerRouter = require("./routes/partnershipRouter");
 const formRouter = require("./routes/formRouter");
-const csvFileRouter = require("./routes/csvFileRouter")
-
+const csvFileRouter = require("./routes/csvFileRouter");
+const headingsForPartnerNews=require("./routes/headingForNewsPartnershipRouter")
 const app = express();
 
 // Middleware
@@ -48,6 +48,7 @@ app.use("/api/footer", footerRouter);
 app.use("/api/partner", partnerRouter);
 app.use("/contactForm", formRouter);
 app.use("/export", csvFileRouter);
+app.use("/api/headingfornewspatnership", headingsForPartnerNews);
 
 
 
