@@ -1,10 +1,10 @@
 const express = require("express");
+const router = express.Router();
 const multer = require("../middlewares/multer"); 
 const upload = require("../middlewares/multer");
-const verifyJWT = require('../middlewares/jwtMiddleware');
 const employeeController = require("../controllers/employeeController");
+const verifyJwt = require('../middlewares/jwtMiddleware')
 
-const router = express.Router();
 
 // Route to get all employees
 router.get("/employees", employeeController.getAllEmployees);
@@ -16,7 +16,7 @@ router.post("/employees",  upload.fields([
     { name: "profileImage", maxCount: 1 },
     { name: "businessCard", maxCount: 1 },
     { name: "Certificate", maxCount: 1 },
-  ]),
+  ]),verifyJwt,
  employeeController.addEmployee);
 
 
@@ -28,10 +28,10 @@ router.put("/employees/:id",
         { name: "profileImage", maxCount: 1 },
         { name: "businessCard", maxCount: 1 },
         { name: "Certificate", maxCount: 1 },
-      ]),
+      ]),verifyJwt,
  employeeController.updateEmployeeById);
 
 // Route to delete an employee by ID
-router.delete("/employees/:id", employeeController.deleteEmployeeById);
+router.delete("/employees/:id",verifyJwt, employeeController.deleteEmployeeById);
 
 module.exports = router;
