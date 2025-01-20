@@ -8,7 +8,7 @@ const employeeSchema = new mongoose.Schema({
         validate: {
             validator: function (v) {
               // Ensures empID starts with "TPE1D" followed by exactly 6 digits
-              return /^TPE1D\d{6}$/.test(v);
+              return /^TPEID\d{6}$/.test(v);
             },
             message: "Employee ID must start with 'TPE1D' followed by 6 digits (e.g., TPE1D123456).",
           },
