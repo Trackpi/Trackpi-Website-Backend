@@ -5,7 +5,7 @@ const projectController = require('../controllers/projectController'); // Contro
 const verifyJwt = require('../middlewares/jwtMiddleware')
 
 // Route for submitting a project (with file upload)
-router.post('/submit', upload.single('projectFile'),verifyJwt, projectController.submitProject);
+router.post('/submit', upload.single('projectFile'), projectController.submitProject);
 
 // Route to get all projects
 router.get('/getAllProjects',verifyJwt, projectController.getAllProjects);

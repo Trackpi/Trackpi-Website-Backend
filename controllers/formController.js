@@ -37,8 +37,14 @@ exports.addForm = async (req, res) => {
       message: "Form submitted successfully",
       data: formAdd,
     });
-  } catch (err) {
+  }catch (err) {
     console.error("Error adding form:", err);
+
+    if (err.name === 'ValidationError') {
+        // Handle Mongoose ValidationError
+        const errorMessages = Object.values(err.errors).map(error => error.message);
+        return res.status(400).json({ error: ` ${errorMessages.join(', ')}` });
+    }
 
     // Handle duplicate email errors (MongoDB unique constraint)
     if (err.code === 11000 && err.keyPattern?.email) {
@@ -46,9 +52,9 @@ exports.addForm = async (req, res) => {
     }
 
     // General error handling
-    res.status(500).json({ error: "An error occurred while submitting the form. Please try again later." });
-  }
-};
+    return res.status(500).json({ error: "An error occurred while submitting the form. Please try again later." });
+}
+}
 
 // Get all form submissions
 exports.getForm = async (req, res) => {

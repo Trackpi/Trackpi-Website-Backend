@@ -34,7 +34,51 @@ exports.addEmployee = async (req, res) => {
 // Process feedback to ensure it's stored as a newline-separated string
 const processedFeedback = Array.isArray(feedback) ? feedback.join('\n') : feedback;
      // Auto-generate empID if not provided
-     const generatedEmpID = empID || `EMP${Date.now()}`;
+     const generatedEmpID = empID || `TPE1D${String(Date.now()).slice(-6)}`;
+
+
+ //validation
+ 
+     if (!/^TPE1D\d{6}$/.test(generatedEmpID)) {
+      return res.status(400).json({
+        message:
+          "Employee ID must start with 'TPE1D' followed by 6 digits (e.g., TPE1D123456).",
+      });
+    }
+
+     if (name && (name.length < 3 || name.length > 64)) {
+      return res
+        .status(400)
+        .json({ message: "Name must be between 3 and 64 characters." });
+    }
+
+    if (phone && !/^\+\d{1,3}\s\d{7,12}$/.test(phone)) {
+      return res.status(400).json({
+        message:
+          "Phone number must include a valid country code (e.g., +91 9876543210) and be 7 to 12 digits long.",
+      });
+    }
+
+    if (fullAddress && fullAddress.length < 6) {
+      return res
+        .status(400)
+        .json({ message: "Address must be at least 6 characters long." });
+    }
+    if (
+      selfIntroduction &&
+      (selfIntroduction.split(/\s+/).length < 50 || selfIntroduction.length > 540)
+    ) {
+      return res.status(400).json({
+        message: "Self-introduction must be between 50 words and 540 characters long.",
+      });
+    }
+    if (email && !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
+      return res
+        .status(400)
+        .json({ message: "Please enter a valid email address." });
+    }
+
+
 
    // Check for duplicate empID
     const existingEmployee = await Employee.findOne({ empID: generatedEmpID });
@@ -45,7 +89,7 @@ const processedFeedback = Array.isArray(feedback) ? feedback.join('\n') : feedba
     const profileImage = req.files?.profileImage?.[0]?.filename ? `/uploads/employees/${req.files.profileImage[0].filename}` : null;
     const businessCard = req.files?.businessCard?.[0]?.filename ? `/uploads/employees/${req.files.businessCard[0].filename}` : null;
     const certificate = req.files?.Certificate?.[0]?.filename ? `/uploads/employees/${req.files.Certificate[0].filename}` : null;
-    
+   
     const employee = new Employee({
       empID: generatedEmpID,
       name,
@@ -99,6 +143,56 @@ exports.updateEmployeeById = async (req, res) => {
       return res.status(404).json({ error: "Employee not found" });
     }
 
+
+
+      // Validation logic
+  
+    if (updates.name && (updates.name.length < 3 || updates.name.length > 64)) {
+      return res
+        .status(400)
+        .json({ message: "Name must be between 3 and 64 characters." });
+    }
+
+    if (updates.phone && !/^\+\d{1,3}\s\d{7,12}$/.test(updates.phone)) {
+      return res.status(400).json({
+        message:
+          "Phone number must include a valid country code (e.g., +91 9876543210) and be 7 to 12 digits long.",
+      });
+    }
+
+    if (updates.fullAddress && updates.fullAddress.length < 6) {
+      return res
+        .status(400)
+        .json({ message: "Address must be at least 6 characters long." });
+    }
+
+    if (
+      updates.selfIntroduction &&
+      (updates.selfIntroduction.split(/\s+/).length < 50 || updates.selfIntroduction.length > 540)
+    ) {
+      return res.status(400).json({
+        message: "Self-introduction must be between 50 words and 540 characters long.",
+      });
+    }
+    if (updates.email && !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(updates.email)) {
+      return res
+        .status(400)
+        .json({ message: "Please enter a valid email address." });
+    }
+
+    if (
+      empID &&
+      empID !== existingEmployee.empID &&
+      !/^TPE1D\d{6}$/.test(empID)
+    ) {
+      return res.status(400).json({
+        message:
+          "Employee ID must start with 'TPE1D' followed by 6 digits (e.g., TPE1D123456).",
+      });
+    }
+
+
+
     // Check for duplicate empID if provided
     if (empID) {
       const duplicateEmployee = await Employee.findOne({
@@ -119,6 +213,9 @@ exports.updateEmployeeById = async (req, res) => {
      const businessCard = req.files?.businessCard?.[0]?.filename ? `/uploads/employees/${req.files.businessCard[0].filename}` : existingEmployee.businessCard;
      const certificate = req.files?.Certificate?.[0]?.filename ? `/uploads/employees/${req.files.Certificate[0].filename}` : existingEmployee.Certificate;
      const processedFeedback = Array.isArray(feedback) ? feedback.join('\n') : feedback;
+  
+
+  
 
     const updatedData = {
       ...req.body,
