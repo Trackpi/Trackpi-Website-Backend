@@ -37,4 +37,6 @@ router.delete("/employees/:id",verifyJwt, employeeController.deleteEmployeeById)
 // Route to get  an employee detail by Employee ID
 router.get("/employeedetail/:id", employeeController.getAEmployeeDetail);
 
+
 module.exports = router;
+
