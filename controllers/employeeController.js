@@ -34,12 +34,12 @@ exports.addEmployee = async (req, res) => {
 // Process feedback to ensure it's stored as a newline-separated string
 const processedFeedback = Array.isArray(feedback) ? feedback.join('\n') : feedback;
      // Auto-generate empID if not provided
-     const generatedEmpID = empID || `TPE1D${String(Date.now()).slice(-6)}`;
+     const generatedEmpID = empID || `TPEID${String(Date.now()).slice(-6)}`;
 
 
  //validation
  
-     if (!/^TPE1D\d{6}$/.test(generatedEmpID)) {
+     if (!/^TPEID\d{6}$/.test(generatedEmpID)) {
       return res.status(400).json({
         message:
           "Employee ID must start with 'TPE1D' followed by 6 digits (e.g., TPE1D123456).",
@@ -183,7 +183,7 @@ exports.updateEmployeeById = async (req, res) => {
     if (
       empID &&
       empID !== existingEmployee.empID &&
-      !/^TPE1D\d{6}$/.test(empID)
+      !/^TPEID\d{6}$/.test(empID)
     ) {
       return res.status(400).json({
         message:
