@@ -9,7 +9,7 @@ const adminRoute = require("./routes/adminRouter");
 const projectRouter = require("./routes/projectRouter");
 const posterRoutes = require("./routes/posterRoutes");
 const employeeRouter = require("./routes/employeeRouter");
-
+const logRouter = require("./routes/logRoutes")
 const newsRouter = require("./routes/newsRouter");
 const footerRouter = require("./routes/footerVideoRouter");
 const partnerRouter = require("./routes/partnershipRouter");
@@ -49,6 +49,8 @@ app.use("/api/partner", partnerRouter);
 app.use("/contactForm", formRouter);
 app.use("/export", csvFileRouter);
 app.use("/api/headingfornewspatnership", headingsForPartnerNews);
+
+app.use(logRouter)
 
 
 
