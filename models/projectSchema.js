@@ -36,10 +36,16 @@ const projectSchema = new mongoose.Schema({
   problemSolved: { type: String, required: true },
   beneficiaries: { type: String, required: true },
   successReason: { type: String, required: true },
-  skills: { type: String, required: true },
+  skills: { type: String },
   summary: { type: String, required: true },
   file: { type: String }, // Added for file URL
   fileName:{type: String },
+  qualification: { type: String, required: true },
+  userType: { type: String, required: true },
+  institute_company: { type: String, required: true },
+
+
+
 }, { timestamps: true });
 
 module.exports = mongoose.model('Project', projectSchema);

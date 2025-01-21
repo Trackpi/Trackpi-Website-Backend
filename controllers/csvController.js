@@ -1,31 +1,37 @@
 const axios = require('axios');
 
 exports.getCsvFile = async (req, res) => {
-  const { type } = req.query; // Get 'type' from query
+  const { type, category } = req.query; // Get 'type' and 'category' from query
 
-  if (!type || (type !== 'project' && type !== 'form')) {
-    return res.status(400).json({ error: 'Invalid type. Use ?type=project or ?type=form' });
+  if (!type || (type !== 'project' && type !== 'form' && type !== 'employee')) {
+    return res.status(400).json({ error: 'Invalid type. Use ?type=project, ?type=form, or ?type=employee' });
   }
 
   try {
-    const token = req.headers.authorization?.split(' ')[1];  // Get token from Authorization header
+    const token = req.headers.authorization?.split(' ')[1]; // Extract token from Authorization header
 
     if (!token) {
       return res.status(401).json({ error: 'Token is missing or invalid' });
     }
 
     let apiUrl;
+    
+    // Determine the API URL based on the type and category
     if (type === 'project') {
-      apiUrl = 'http://localhost:3001/api/projects/getAllProjects'; // Adjust API URL if necessary
+      apiUrl = 'http://localhost:3001/api/projects/getAllProjects';
+    } else if (type === 'form') {
+      apiUrl = 'http://localhost:3001/contactForm/getforms';
+    } else if (type === 'employee' && category) {
+      apiUrl = `http://localhost:3001/api/employee/employees?category=${category}`;
     } else {
-      apiUrl = 'http://localhost:3001/contactForm/getforms'; // Adjust API URL if necessary
+      return res.status(400).json({ error: 'For employees, provide a valid category (sales, intern, employee)' });
     }
+
+    console.log(`Fetching data from: ${apiUrl}`);
 
     // Make the request to the API with the token
     const response = await axios.get(apiUrl, {
-      headers: {
-        Authorization: `Bearer ${token}`,  // Send the token in the request
-      },
+      headers: { Authorization: `Bearer ${token}` },
     });
 
     const data = response.data;
@@ -46,10 +52,9 @@ exports.getCsvFile = async (req, res) => {
 
     // Set response headers for CSV file download
     res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', `attachment; filename=${type}-data.csv`);
+    res.setHeader('Content-Disposition', `attachment; filename=${type}-${category || 'data'}.csv`);
 
     res.status(200).send(csv);
-
   } catch (error) {
     console.error('Error exporting CSV:', error);
     res.status(500).json({ error: 'An error occurred while exporting data.' });

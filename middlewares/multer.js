@@ -43,6 +43,7 @@ const upload = multer({
   storage,
   limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
   fileFilter: (req, file, cb) => {
+    var allowedTypes = /jpeg|jpg|png|pdf|mp3/; 
     if (req.baseUrl.includes("employee")) {
       allowedTypes = /jpeg|jpg|png|pdf/; // Only images and PDFs for employees
     }
