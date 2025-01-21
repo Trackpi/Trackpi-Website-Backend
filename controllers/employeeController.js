@@ -272,3 +272,20 @@ exports.deleteEmployeeById = async (req, res) => {
     res.status(500).json({ error: "Error deleting employee", details: error.message });
   }
 };
+
+exports.getAEmployeeDetail = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const employeeDetail = await Employee.findOne({ empID: id });
+
+    if (!employeeDetail) {
+      return res.status(404).json({ message: 'Employee not found' });
+    }
+
+    res.status(200).json(employeeDetail);
+  } catch (error) {
+    console.error('Error in getting data:', error.message);
+    res.status(500).json({ error: 'Failed to get employee detail' });
+  }
+};
