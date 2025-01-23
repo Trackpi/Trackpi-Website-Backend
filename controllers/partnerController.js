@@ -49,8 +49,8 @@ exports.getPartnerById = async (req, res) => {
 // Update a partner by ID
 exports.updatePartner = async (req, res) => {
   const { id } = req.params;
-  const { companylogo, companyname, description } = req.body;
-
+  const { companyname, description } = req.body;
+  const companylogo=req.file ? `/uploads/partner/${req.file.filename}` : null;
   try {
     const updatedPartner = await Partners.findByIdAndUpdate(
       id,

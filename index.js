@@ -54,7 +54,7 @@ app.use(logRouter)
 
 
 
-app.use("/assets",express.static(path.join(__dirname,"uploads","projects")));
+app.use("/assets",express.static(path.join(__dirname,"uploads","projects",)));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // console.log(path.join(__dirname,"uploads","projects","1736697702064.pdf"));
