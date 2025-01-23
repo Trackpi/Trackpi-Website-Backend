@@ -40,17 +40,18 @@ const employeeSchema = new mongoose.Schema({
       
     },
     selfIntroduction: {
-        type: String,
-        validate: {
-            validator: function (v) {
-                const wordCount = v.trim().split(/\s+/).length; // Count words
-                const charCount = v.length; // Count characters
-    
-                return wordCount >= 50 && charCount <= 540; // Validate both
-            },
-            message: "Self-introduction must be between 50 words and 540 characters.",
-        },
-    },
+      type: String,
+      validate: {
+          validator: function (v) {
+              const wordCount = v.trim().split(/\s+/).length; // Count words
+              const charCount = v.length; // Count characters
+  
+              // Validate both word count (between 30-40 words) and character count (up to 540 characters)
+              return wordCount >= 30 && wordCount <= 40 && charCount <= 540;
+          },
+          message: "Self-introduction must be between 30 and 40 words, and no more than 540 characters.",
+      },
+  },
     
     phone: { 
         type: String,
