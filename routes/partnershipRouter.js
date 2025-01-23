@@ -15,6 +15,6 @@ router.get('/getpartner', partnerController.getAllPartners);
 router.delete('/deletepartner/:id',verifyJwt, partnerController.deletePartner);
 
 // update a partner detail
-router.patch('/updatepartner/:id',verifyJwt, upload.single('companylogo'), partnerController.updatePartner);
+router.patch('/updatepartner/:id', upload.single('companylogo'), partnerController.updatePartner);
 
 module.exports = router;
