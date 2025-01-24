@@ -53,7 +53,6 @@ exports.submitProject = async (req, res) => {
     }
 
     // Handle file path
-    const filePath = `http://${process.env.BASE_URL}:${process.env.PORT}/uploads/projects/${req.file.filename}`;
     const file_path = `/uploads/projects/${req.file.filename}`
 
     // Create a new project document

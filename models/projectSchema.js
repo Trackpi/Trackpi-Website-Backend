@@ -34,10 +34,10 @@ const projectSchema = new mongoose.Schema({
   },
   projectName: { type: String, required: true },
   problemSolved: { type: String, required: true },
-  beneficiaries: { type: String, required: true },
-  successReason: { type: String, required: true },
+  beneficiaries: { type: String, },
+  successReason: { type: String, },
   skills: { type: String },
-  summary: { type: String, required: true },
+  summary: { type: String,},
   file: { type: String }, // Added for file URL
   fileName:{type: String },
   qualification: { type: String, required: true },
