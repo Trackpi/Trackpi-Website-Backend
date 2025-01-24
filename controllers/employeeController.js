@@ -66,10 +66,10 @@ const processedFeedback = Array.isArray(feedback) ? feedback.join('\n') : feedba
     }
     if (
       selfIntroduction &&
-      (selfIntroduction.split(/\s+/).length < 50 || selfIntroduction.length > 540)
+      (selfIntroduction.split(/\s+/).length < 30 || selfIntroduction.split(/\s+/).length > 40 || selfIntroduction.length > 540)
     ) {
       return res.status(400).json({
-        message: "Self-introduction must be between 50 words and 540 characters long.",
+        message: "Self-introduction must be between 30 and 40 words, and no more than 540 characters long.",
       });
     }
     if (email && !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
@@ -168,12 +168,13 @@ exports.updateEmployeeById = async (req, res) => {
 
     if (
       updates.selfIntroduction &&
-      (updates.selfIntroduction.split(/\s+/).length < 50 || updates.selfIntroduction.length > 540)
+      (updates.selfIntroduction.split(/\s+/).length < 30 || updates.selfIntroduction.split(/\s+/).length > 40 || updates.selfIntroduction.length > 540)
     ) {
       return res.status(400).json({
-        message: "Self-introduction must be between 50 words and 540 characters long.",
+        message: "Self-introduction must be between 30 and 40 words, and no more than 540 characters long.",
       });
     }
+    
     if (updates.email && !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(updates.email)) {
       return res
         .status(400)
