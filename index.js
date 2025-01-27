@@ -62,5 +62,5 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(adminRoute);
 
 app.listen(process.env.PORT,()=>{
-  console.log(`server is running @ http://localhost:${process.env.PORT}`)
+  console.log(`server is running @ http://${process.env.BASE_URL}:${process.env.PORT}`)
 })
