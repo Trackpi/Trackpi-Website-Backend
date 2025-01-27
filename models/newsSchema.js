@@ -8,6 +8,6 @@ const newsSchema= new mongoose.Schema({
         type:String,
         required:true
     }
-})
+},{ timestamps: true })
 const news=mongoose.model('news',newsSchema)
 module.exports=news
